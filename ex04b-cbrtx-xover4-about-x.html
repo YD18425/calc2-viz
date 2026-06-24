@@ -61,6 +61,9 @@ const o=Object.assign({},DEFAULTS,qp());
 $("ttl").textContent=o.title||"Solid of Revolution";
 if(o.sub)$("sub").textContent=o.sub+" · interactive 3D";
 let axis=(o.axis||"x").toLowerCase();
+const CAM = (axis==="x")
+  ? {eye:{x:0.15,y:-2.05,z:0.72}, up:{x:0,y:0,z:1}, center:{x:0,y:0,z:0}}
+  : {eye:{x:2.0,y:0.55,z:1.55},  up:{x:0,y:1,z:0}, center:{x:0,y:0,z:0}};
 let t0=parseFloat(o.t0), t1=parseFloat(o.t1);
 let Rout,Rin;
 try{ Rout=mkfun(o.outer); Rin=mkfun(o.inner!==undefined?o.inner:"0"); }
@@ -78,22 +81,22 @@ function draw(){ if($("err").style.display==="block")return;
   const frac=parseFloat($("slc").value)/100, tcut=t0+(t1-t0)*frac;
   const hasHole=(()=>{for(const t of linspace(t0,t1,40)){if((Rin(t)||0)>1e-9)return true;}return false;})();
   const traces=[]; const so=surfaceMesh(Rout,ang);
-  traces.push({type:"surface",x:so.x,y:so.y,z:so.z,showscale:false,opacity:0.55,colorscale:[[0,"#3fa46a"],[1,"#7fdcab"]],hoverinfo:"skip"});
-  if(hasHole){const si=surfaceMesh(Rin,ang);traces.push({type:"surface",x:si.x,y:si.y,z:si.z,showscale:false,opacity:0.75,colorscale:[[0,"#2f7fb0"],[1,"#7fb8da"]],hoverinfo:"skip"});}
-  const gc=genCurve(Rout,ang);traces.push({type:"scatter3d",mode:"lines",x:gc.x,y:gc.y,z:gc.z,line:{width:6,color:"#1f6fc4"},name:"outer radius R"});
+  traces.push({type:"surface",x:so.x,y:so.y,z:so.z,showscale:false,opacity:0.5,colorscale:[[0,"#46b07a"],[1,"#46b07a"]],flatshading:true,hoverinfo:"skip",lighting:{ambient:0.66,diffuse:0.85,specular:0.10,roughness:0.9,fresnel:0.1},lightposition:{x:120,y:200,z:240}});
+  if(hasHole){const si=surfaceMesh(Rin,ang);traces.push({type:"surface",x:si.x,y:si.y,z:si.z,showscale:false,opacity:0.85,colorscale:[[0,"#3d6fa6"],[1,"#3d6fa6"]],flatshading:true,hoverinfo:"skip",lighting:{ambient:0.7,diffuse:0.8,specular:0.1,roughness:0.9},lightposition:{x:120,y:200,z:240}});}
+  const gc=genCurve(Rout,ang);traces.push({type:"scatter3d",mode:"lines",x:gc.x,y:gc.y,z:gc.z,line:{width:7,color:"#0d47a1"},name:"outer radius R"});
   if(hasHole){const gi=genCurve(Rin,ang);traces.push({type:"scatter3d",mode:"lines",x:gi.x,y:gi.y,z:gi.z,line:{width:6,color:"#1f6fc4",dash:"dash"},name:"inner radius r"});}
   const ro=ring(Rout,tcut,ang);traces.push({type:"scatter3d",mode:"lines",x:ro.x,y:ro.y,z:ro.z,line:{width:8,color:"#f4a300"},name:"cross-section"});
   if(hasHole){const ri=ring(Rin,tcut,ang);traces.push({type:"scatter3d",mode:"lines",x:ri.x,y:ri.y,z:ri.z,line:{width:6,color:"#f4a300",dash:"dot"},name:"inner rim"});}
   let ax= axis==="x" ? {x:[t0-0.4,t1+0.4],y:[0,0],z:[0,0]} : {x:[0,0],y:[t0-0.4,t1+0.4],z:[0,0]};
-  traces.push({type:"scatter3d",mode:"lines",x:ax.x,y:ax.y,z:ax.z,line:{width:5,color:"#e23b3b"},name:(axis==="x"?"x-axis":"y-axis")});
+  traces.push({type:"scatter3d",mode:"lines",x:ax.x,y:ax.y,z:ax.z,line:{width:7,color:"#e23b3b"},name:(axis==="x"?"x-axis":"y-axis")});
   const layout={margin:{l:0,r:0,t:0,b:0},showlegend:true,legend:{orientation:"h",y:1.04,x:0,font:{size:11}},
     scene:{aspectmode:"data",xaxis:{title:"x",showbackground:true,backgroundcolor:"#fafafa",gridcolor:"#e3e3e3"},
       yaxis:{title:"y",showbackground:true,backgroundcolor:"#fafafa",gridcolor:"#e3e3e3"},
-      zaxis:{title:"z",showbackground:true,backgroundcolor:"#fafafa",gridcolor:"#e3e3e3"},camera:{eye:{x:1.5,y:1.5,z:1.1}}}};
+      zaxis:{title:"z",showbackground:true,backgroundcolor:"#fafafa",gridcolor:"#e3e3e3"},camera:CAM}};
   Plotly.react("plot",traces,layout,{responsive:true,displaylogo:false});
 }
 $("ang").oninput=draw; $("slc").oninput=draw;
-$("reset").onclick=()=>Plotly.relayout("plot",{"scene.camera":{eye:{x:1.5,y:1.5,z:1.1}}});
+$("reset").onclick=()=>Plotly.relayout("plot",{"scene.camera":CAM});
 (function(){const dv=(axis==="x")?"dx":"dy",R=o.outer,r=(o.inner!==undefined?o.inner:"0");
   $("frm").textContent=(String(r)==="0"||String(r)==="")
     ? "V = \u03C0 \u222B ["+R+"]\u00B2 "+dv+"   (disk),  "+axis+" \u2208 ["+t0+", "+t1+"]"

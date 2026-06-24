@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Example 2(a) — y=¼x² about the y-axis</title>
+<title>The Method of Washers — about the y-axis</title>
 <script src="https://cdn.plot.ly/plotly-2.35.2.min.js" charset="utf-8"></script>
 <style>
   :root{ --blue:#005AAA; --green:#007D55; --red:#C42327; }
@@ -41,7 +41,7 @@
 <script>
 "use strict";
 // ---- baked-in defaults for THIS solid (URL query string overrides any of these) ----
-const DEFAULTS = {"axis": "y", "t0": 0, "t1": 1, "outer": "2*sqrt(t)", "inner": "0", "title": "Example 2(a) \u2014 y=\u00bcx\u00b2 about the y-axis", "sub": "Disk method"};
+const DEFAULTS = {"axis": "y", "t0": 0, "t1": 3.4, "outer": "0.95+0.30*sin(t)", "inner": "0.42+0.12*sin(t)", "title": "The Method of Washers \u2014 about the y-axis", "sub": "Washer method (illustration)"};
 const $=id=>document.getElementById(id);
 function qp(){const p=new URLSearchParams(location.search),o={};for(const[k,v]of p)o[k]=v;return o;}
 function mkfun(expr){

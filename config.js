@@ -23,6 +23,10 @@ const VIZ_URLS = {
   "extra10-x2-y4-about-y": `${BASE_URL}/extra10-x2-y4-about-y.html`,
   "extra11a-lines-about-x": `${BASE_URL}/extra11a-lines-about-x.html`,
   "extra11b-lines-about-y": `${BASE_URL}/extra11b-lines-about-y.html`,
+  "method-disks-about-x": `${BASE_URL}/method-disks-about-x.html`,
+  "method-disks-about-y": `${BASE_URL}/method-disks-about-y.html`,
+  "method-washers-about-x": `${BASE_URL}/method-washers-about-x.html`,
+  "method-washers-about-y": `${BASE_URL}/method-washers-about-y.html`,
 };
 
 if (typeof module !== 'undefined') module.exports = { GITHUB_USERNAME, BASE_URL, VIZ_URLS };
