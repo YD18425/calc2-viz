@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Extra 2(b) — y=√(x−1), y=2 about the y-axis</title>
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js" charset="utf-8"></script>
+<style>
+  :root{ --blue:#005AAA; --green:#007D55; --red:#C42327; }
+  *{box-sizing:border-box} body{margin:0;font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:#222;background:#fff}
+  header{background:var(--blue);color:#fff;padding:10px 14px}
+  header h1{font-size:1.02rem;margin:0} header .sub{font-size:.82rem;opacity:.92;margin-top:2px}
+  #plot{width:100vw;height:62vh;min-height:340px}
+  .panel{padding:10px 14px;border-top:1px solid #e6e6e6}
+  .row{display:flex;flex-wrap:wrap;gap:14px;align-items:center;font-size:.86rem;margin-top:6px}
+  .chip{display:inline-flex;align-items:center;gap:6px}
+  .sw{width:14px;height:14px;border-radius:3px;display:inline-block;border:1px solid #0003}
+  label{font-size:.84rem;color:#444} input[type=range]{vertical-align:middle}
+  .formula{font-size:.9rem;background:#f5f8fc;border:1px solid #dbe7f4;border-radius:6px;padding:8px 10px;margin-top:8px;overflow-x:auto}
+  .err{color:#b00;font-size:.85rem;padding:10px 14px} button{font-size:.84rem;padding:5px 10px;border:1px solid #bcd;border-radius:6px;background:#eef5fc;cursor:pointer}
+</style>
+</head>
+<body>
+<header><h1 id="ttl">Solid of Revolution</h1><div class="sub" id="sub">Math 102 — Calculus II · interactive 3D</div></header>
+<div id="plot"></div>
+<div id="err" class="err" style="display:none"></div>
+<div class="panel">
+  <div class="row">
+    <span class="chip"><span class="sw" style="background:#9ad1ff"></span>generating region</span>
+    <span class="chip"><span class="sw" style="background:#56c596"></span>solid of revolution</span>
+    <span class="chip"><span class="sw" style="background:#e23b3b"></span>axis of rotation</span>
+    <span class="chip"><span class="sw" style="background:#f4a300"></span>representative shell</span>
+  </div>
+  <div class="row">
+    <label>Sweep <input id="ang" type="range" min="20" max="360" value="300"> <span id="angv">300&deg;</span></label>
+    <label>Shell <input id="slc" type="range" min="0" max="100" value="55"></label>
+    <button id="reset">Reset view</button>
+  </div>
+  <div class="formula" id="frm"></div>
+</div>
+<script>
+"use strict";
+const DEFAULTS = {"rev": "y", "t0": 0, "t1": 5, "lo": "sqrt(t-1)", "hi": "2", "title": "Extra 2(b) \u2014 y=\u221a(x\u22121), y=2 about the y-axis", "sub": "Shells (radius x)", "frm": "V = \u222b\u2080\u2075 2\u03c0x\u00b7h(x) dx = 206\u03c0/15"};
+const $=id=>document.getElementById(id);
+function qp(){const p=new URLSearchParams(location.search),o={};for(const[k,v]of p)o[k]=v;return o;}
+function mkfun(expr){
+  if(expr===undefined||expr===null||expr==="") return function(t){return 0;};
+  let s=String(expr).toLowerCase();
+  if(!/^[0-9t+\-*/^().,\sa-z]*$/.test(s)) throw new Error("bad characters in '"+expr+"'");
+  s=s.replace(/\bpi\b/g,"Math.PI")
+     .replace(/\basin\(/g,"Math.asin(").replace(/\bacos\(/g,"Math.acos(").replace(/\batan\(/g,"Math.atan(")
+     .replace(/\bcbrt\(/g,"Math.cbrt(").replace(/\bsqrt\(/g,"Math.sqrt(").replace(/\babs\(/g,"Math.abs(")
+     .replace(/\bexp\(/g,"Math.exp(").replace(/\bln\(/g,"Math.log(").replace(/\blog\(/g,"Math.log(")
+     .replace(/\bsin\(/g,"Math.sin(").replace(/\bcos\(/g,"Math.cos(").replace(/\btan\(/g,"Math.tan(")
+     .replace(/\bmin\(/g,"Math.min(").replace(/\bmax\(/g,"Math.max(")
+     .replace(/\^/g,"**");
+  return new Function("t","try{return ("+s+");}catch(e){return NaN;}");
+}
+function linspace(a,b,n){const o=[];for(let i=0;i<n;i++)o.push(a+(b-a)*i/(n-1));return o;}
+const o=Object.assign({},DEFAULTS,qp());
+$("ttl").textContent=o.title||"Solid of Revolution";
+if(o.sub)$("sub").textContent=o.sub+" · interactive 3D";
+const rev=(o.rev||"y").toLowerCase();
+let t0=parseFloat(o.t0), t1=parseFloat(o.t1);
+let LO,HI;
+try{ LO=mkfun(o.lo); HI=mkfun(o.hi); }catch(e){ $("err").style.display="block"; $("err").textContent="Parameter error: "+e.message; }
+function lo(t){const v=LO(t);return isFinite(v)?v:0;}
+function hi(t){const v=HI(t);return isFinite(v)?v:0;}
+const CAM = (rev==="x")
+  ? {eye:{x:0.2,y:-2.0,z:0.85}, up:{x:0,y:0,z:1}, center:{x:0,y:0,z:0}}
+  : {eye:{x:2.0,y:0.6,z:1.5},   up:{x:0,y:1,z:0}, center:{x:0,y:0,z:0}};
+const NT=68, NA=68;
+function P(t,a,th){const c=Math.cos(th),s=Math.sin(th);
+  if(rev==="y") return [t*c, a, t*s];
+  return [a, t*c, t*s];
+}
+function capSurface(which,ang){
+  const ts=linspace(t0,t1,NT), th=linspace(0,ang*Math.PI/180,NA);
+  const X=[],Y=[],Z=[];
+  for(let i=0;i<NA;i++){const xr=[],yr=[],zr=[];
+    for(let j=0;j<NT;j++){const t=ts[j], a=(which==='hi'?hi(t):lo(t)); const p=P(t,a,th[i]);
+      xr.push(p[0]);yr.push(p[1]);zr.push(p[2]);}
+    X.push(xr);Y.push(yr);Z.push(zr);}
+  return {x:X,y:Y,z:Z};
+}
+function wallSurface(r0,ang){
+  const aa=linspace(lo(r0),hi(r0),NT), th=linspace(0,ang*Math.PI/180,NA);
+  const X=[],Y=[],Z=[];
+  for(let i=0;i<NA;i++){const xr=[],yr=[],zr=[];
+    for(let j=0;j<NT;j++){const p=P(r0,aa[j],th[i]); xr.push(p[0]);yr.push(p[1]);zr.push(p[2]);}
+    X.push(xr);Y.push(yr);Z.push(zr);}
+  return {x:X,y:Y,z:Z};
+}
+function regionOutline(){
+  const ts=linspace(t0,t1,NT), x=[],y=[],z=[];
+  for(let j=0;j<NT;j++){const p=P(ts[j],hi(ts[j]),0);x.push(p[0]);y.push(p[1]);z.push(p[2]);}
+  for(let j=NT-1;j>=0;j--){const p=P(ts[j],lo(ts[j]),0);x.push(p[0]);y.push(p[1]);z.push(p[2]);}
+  const p=P(ts[0],hi(ts[0]),0);x.push(p[0]);y.push(p[1]);z.push(p[2]);
+  return {x,y,z};
+}
+function axisLine(){ let amin=Infinity,amax=-Infinity;
+  for(const t of linspace(t0,t1,40)){amin=Math.min(amin,lo(t),hi(t));amax=Math.max(amax,lo(t),hi(t));}
+  amin=Math.min(amin,0);amax=Math.max(amax,0);
+  const p0=(rev==="y")?[0,amin-0.3,0]:[amin-0.3,0,0];
+  const p1=(rev==="y")?[0,amax+0.3,0]:[amax+0.3,0,0];
+  return {x:[p0[0],p1[0]],y:[p0[1],p1[1]],z:[p0[2],p1[2]]};
+}
+const GREEN=[[0,"#46b07a"],[1,"#46b07a"]], ORANGE=[[0,"#f4a300"],[1,"#f4a300"]];
+function surf(s,col,op){return {type:"surface",x:s.x,y:s.y,z:s.z,showscale:false,opacity:op,colorscale:col,flatshading:true,hoverinfo:"skip",lighting:{ambient:0.66,diffuse:0.85,specular:0.1,roughness:0.9},lightposition:{x:120,y:200,z:240}};}
+function draw(){ if($("err").style.display==="block")return;
+  const ang=parseFloat($("ang").value); $("angv").textContent=ang+"°";
+  const frac=parseFloat($("slc").value)/100, rc=t0+(t1-t0)*frac;
+  const traces=[];
+  traces.push(surf(capSurface('hi',ang),GREEN,0.42));
+  traces.push(surf(capSurface('lo',ang),GREEN,0.42));
+  traces.push(surf(wallSurface(t1,ang),GREEN,0.40));
+  if(t0>1e-6) traces.push(surf(wallSurface(t0,ang),GREEN,0.40));
+  traces.push(surf(wallSurface(rc,ang),ORANGE,0.97));
+  const ro=regionOutline();
+  traces.push({type:"scatter3d",mode:"lines",x:ro.x,y:ro.y,z:ro.z,line:{width:6,color:"#0d47a1"},name:"generating region"});
+  const ax=axisLine();
+  traces.push({type:"scatter3d",mode:"lines",x:ax.x,y:ax.y,z:ax.z,line:{width:7,color:"#e23b3b"},name:(rev==="x"?"x-axis":"y-axis")});
+  const layout={margin:{l:0,r:0,t:0,b:0},showlegend:true,legend:{orientation:"h",y:1.04,x:0,font:{size:11}},
+    scene:{aspectmode:"data",
+      xaxis:{title:"x",showbackground:true,backgroundcolor:"#fafafa",gridcolor:"#e3e3e3"},
+      yaxis:{title:"y",showbackground:true,backgroundcolor:"#fafafa",gridcolor:"#e3e3e3"},
+      zaxis:{title:"z",showbackground:true,backgroundcolor:"#fafafa",gridcolor:"#e3e3e3"},camera:CAM}};
+  Plotly.react("plot",traces,layout,{responsive:true,displaylogo:false});
+}
+$("ang").oninput=draw;$("slc").oninput=draw;
+$("reset").onclick=function(){Plotly.relayout("plot",{"scene.camera":CAM});};
+$("frm").textContent=o.frm||"";
+draw();
+</script>
+</body>
+</html>
