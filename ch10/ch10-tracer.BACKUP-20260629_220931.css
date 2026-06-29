@@ -33,14 +33,3 @@ footer{font-size:12px;color:var(--muted);text-align:center;padding:6px 0 22px}
 .tansummary .smh{color:#0a8f5b;font-weight:700}
 .tansummary .smv{color:#e64a19;font-weight:700}
 .tansummary .smn{color:var(--muted);font-size:12px;margin-top:5px;line-height:1.6}
-/* ----- §10.3 polar mode (additive; unused by §10.1/§10.2 pages) ----- */
-#vtbl td.pcol{cursor:pointer}
-#vtbl td.fam-axis{background:rgba(224,168,0,.16)}
-#vtbl td.fam-sixth{background:rgba(226,112,42,.13)}
-#vtbl td.fam-quarter{background:rgba(30,150,70,.14)}
-#vtbl td.fam-third{background:rgba(142,68,173,.13)}
-#vtbl td.active{outline:2px solid var(--blue);font-weight:700}
-.snapbtn{font-size:12px;padding:3px 9px;background:#eef5fc;color:var(--blue);border:1px solid var(--line);border-radius:6px;cursor:pointer}
-.snapbtn:hover{background:#dceaf8}
-#snaps{gap:6px 6px}
-#polarbox{font-size:13px;font-variant-numeric:tabular-nums}
