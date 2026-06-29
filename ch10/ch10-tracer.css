@@ -14,3 +14,9 @@ canvas{width:100%;height:auto;display:block;background:#fff;border:1px solid var
 .ro{font-variant-numeric:tabular-nums;font-size:14px}
 .hint{font-size:12px;color:var(--muted)}
 footer{font-size:12px;color:var(--muted);text-align:center;padding:6px 0 22px}
+.vizrow{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-start}
+.cvwrap{flex:1 1 360px;min-width:280px}
+.tblwrap{flex:1 1 300px;min-width:240px;max-width:100%;overflow-x:auto;border:1px solid var(--line);border-radius:8px}
+#vtbl{border-collapse:collapse;font-size:11px;font-variant-numeric:tabular-nums}
+#vtbl th,#vtbl td{border:1px solid #eef2f6;padding:2px 4px;text-align:center;min-width:26px;height:20px;white-space:nowrap;transition:background .12s linear}
+#vtbl th.rl{position:sticky;left:0;background:#fff;font-weight:700;color:var(--blue);min-width:18px;z-index:1}
