@@ -20,3 +20,16 @@ footer{font-size:12px;color:var(--muted);text-align:center;padding:6px 0 22px}
 #vtbl{border-collapse:collapse;font-size:11px;font-variant-numeric:tabular-nums}
 #vtbl th,#vtbl td{border:1px solid #eef2f6;padding:2px 4px;text-align:center;min-width:26px;height:20px;white-space:nowrap;transition:background .12s linear}
 #vtbl th.rl{position:sticky;left:0;background:#fff;font-weight:700;color:var(--blue);min-width:18px;z-index:1}
+.taneq{margin-top:12px;padding:10px 14px;border:1px solid var(--line);border-radius:8px;background:#fbfdff;line-height:1.5}
+.taneq .lab{color:var(--muted);font-size:13px}
+.taneq .eq{font-weight:700;font-size:17px;font-variant-numeric:tabular-nums;margin-left:6px}
+.taneq .tag{color:var(--muted);font-style:italic;font-size:13px;margin-left:8px}
+#vtbl td.crit{font-weight:700;border-left:2px solid var(--blue);border-right:2px solid var(--blue);background:#eef5fc}
+#vtbl td.critV{color:#e64a19}
+#vtbl td.critH{color:#0a8f5b}
+#vtbl td .sub{font-size:9px;color:var(--muted);font-weight:400}
+.tansummary{margin-top:12px;padding:10px 14px;border:1px solid var(--line);border-radius:8px;background:#fff;font-size:13px;line-height:1.7}
+.tansummary .smtitle{font-weight:700;color:var(--blue);margin-bottom:4px}
+.tansummary .smh{color:#0a8f5b;font-weight:700}
+.tansummary .smv{color:#e64a19;font-weight:700}
+.tansummary .smn{color:var(--muted);font-size:12px;margin-top:5px;line-height:1.6}

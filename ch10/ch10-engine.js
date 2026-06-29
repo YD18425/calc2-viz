@@ -1,4 +1,5 @@
 "use strict";
+/* ch10 engine build: 2026-06-29 §10.2 tangent-mode */
 /* Math 102 — Chapter 10 shared parametric-tracer engine.
    A per-problem page sets window.CH10_PRESET = "<slug>" then loads this script.
    Features: drag t, Play/Reverse/Speed, zoom/pan, Reset; shape sliders (preset.params);
@@ -29,7 +30,47 @@ const P = {
   "lab3-loop":        {label:"Lab 3 — x = 1 − t²,  y = 2t − t²", eqn:"x = 1 − t²,  y = 2t − t²,  −1 ≤ t ≤ 2", x:t=>1-t*t, y:t=>2*t-t*t, tmin:-1, tmax:2},
   "lab6-parabola":    {label:"Lab 6 — x = cos²t,  y = 1 + cos t", eqn:"x = cos²t,  y = 1 + cos t,  0 ≤ t ≤ π   ⇒   x = (y−1)²", x:t=>Math.cos(t)**2, y:t=>1+Math.cos(t), tmin:0, tmax:Math.PI},
   "lab15-secant":     {label:"Lab 15 — x = cos θ,  y = sec²θ", eqn:"x = cos θ,  y = sec²θ,  0 ≤ θ < π/2   ⇒   y = 1/x²", x:t=>Math.cos(t), y:t=>1/(Math.cos(t)**2), tmin:0, tmax:1.30},
-  "lab20-absv":       {label:"Lab 20 — x = |t|,  y = |1 − |t||", eqn:"x = |t|,  y = |1 − |t||   ⇒   y = |1 − x|, x ≥ 0", x:t=>Math.abs(t), y:t=>Math.abs(1-Math.abs(t)), tmin:-3, tmax:3}
+  "lab20-absv":       {label:"Lab 20 — x = |t|,  y = |1 − |t||", eqn:"x = |t|,  y = |1 − |t||   ⇒   y = |1 − x|, x ≥ 0", x:t=>Math.abs(t), y:t=>Math.abs(1-Math.abs(t)), tmin:-3, tmax:3},
+  // ---- §10.2 tangent-mode presets (tangent line + live slope + H/V highlights) ----
+  "ex3-ellipse-hv": {label:"§10.2 Example 3 — x = cos t,  y = 4 sin t   (tangents to an ellipse)",
+                     eqn:"x = cos t,  y = 4 sin t,  0 ≤ t ≤ 2π        dy/dx = (4 cos t) / (−sin t)",
+                     x:t=>Math.cos(t), y:t=>4*Math.sin(t), dx:t=>-Math.sin(t), dy:t=>4*Math.cos(t),
+                     tmin:0, tmax:TAU, sec:"§10.2", tangent:true, crit:[{t:0,lab:"0"},{t:Math.PI/2,lab:"π/2"},{t:Math.PI,lab:"π"},{t:3*Math.PI/2,lab:"3π/2"},{t:TAU,lab:"2π"}], snap:0.02,
+                     hpts:[{x:0,y:4},{x:0,y:-4}], vpts:[{x:1,y:0},{x:-1,y:0}]},
+  "ex1-scrambler-slope": {label:"§10.2 Example 1 — x = 2cos t + sin 2t,  y = 2sin t + cos 2t",
+    eqn:"x = 2cos t + sin 2t,  y = 2sin t + cos 2t,  0 ≤ t ≤ 2π        slope at t=0: m = 1",
+    x:t=>2*Math.cos(t)+Math.sin(2*t), y:t=>2*Math.sin(t)+Math.cos(2*t),
+    dx:t=>-2*Math.sin(t)+2*Math.cos(2*t), dy:t=>2*Math.cos(t)-2*Math.sin(2*t),
+    tmin:0, tmax:TAU, sec:"§10.2", tangent:true, snap:0.02,
+    crit:[{t:Math.PI/2,lab:"π/2"}], hpts:[{x:0,y:1}], vpts:[],
+    note:"Cusps (x'=y'=0) at t=π/6, 5π/6, 3π/2.  Focus: t=0 → (2, 1), slope 1, y = x − 1."},
+  "ex2-cubic-hv": {label:"§10.2 Example 2 — x = t²,  y = t³ − t   (horizontal & vertical tangents)",
+    eqn:"x = t²,  y = t³ − t        x' = 2t,  y' = 3t² − 1",
+    x:t=>t*t, y:t=>t*t*t-t, dx:t=>2*t, dy:t=>3*t*t-1,
+    tmin:-1.5, tmax:1.5, sec:"§10.2", tangent:true, snap:0.02,
+    crit:[{t:-1/Math.sqrt(3),lab:"−1/√3"},{t:0,lab:"0"},{t:1/Math.sqrt(3),lab:"1/√3"}],
+    hpts:[{x:1/3,y:-0.3849},{x:1/3,y:0.3849}], vpts:[{x:0,y:0}],
+    note:"Self-intersection at (1, 0): t = 1 (slope 1) and t = −1 (slope −1)."},
+  "lab5-derivatives": {label:"§10.2 Lab 5 — x = t² + 2t,  y = 2ᵗ − 2t",
+    eqn:"x = t² + 2t,  y = 2^t − 2t        x' = 2t + 2,  y' = 2^t ln2 − 2",
+    x:t=>t*t+2*t, y:t=>Math.pow(2,t)-2*t, dx:t=>2*t+2, dy:t=>Math.pow(2,t)*Math.LN2-2,
+    tmin:-2, tmax:2.5, sec:"§10.2", tangent:true, snap:0.02,
+    crit:[{t:-1,lab:"−1"},{t:Math.log2(2/Math.LN2),lab:"1.53"}],
+    hpts:[{x:5.3948,y:-0.1722}], vpts:[{x:-1,y:2.5}],
+    note:"Vertical at t = −1 → (−1, 2.5).  Horizontal at t = log₂(2/ln2) ≈ 1.53 → (5.39, −0.17)."},
+  "lab8-tangent": {label:"§10.2 Lab 8 — x = √t,  y = t² − 2t   (tangent at t = 4)",
+    eqn:"x = √t,  y = t² − 2t,  t ≥ 0        x' = 1/(2√t),  y' = 2t − 2",
+    x:t=>Math.sqrt(t), y:t=>t*t-2*t, dx:t=>1/(2*Math.sqrt(t)), dy:t=>2*t-2,
+    tmin:0, tmax:5, sec:"§10.2", tangent:true, snap:0.02,
+    crit:[{t:0,lab:"0"},{t:1,lab:"1"},{t:4,lab:"4"}],
+    hpts:[{x:0,y:0},{x:1,y:-1}], vpts:[],
+    note:"Focus: t = 4 → (2, 8), y = 24x − 40.  Endpoint t = 0: x' → ∞ (slope → 0)."},
+  "lab18-concavity": {label:"§10.2 Lab 18 — x = t² − 1,  y = eᵗ − 1   (concavity)",
+    eqn:"x = t² − 1,  y = e^t − 1        dy/dx = e^t/(2t),  d²y/dx² = e^t(t−1)/(4t³)",
+    x:t=>t*t-1, y:t=>Math.exp(t)-1, dx:t=>2*t, dy:t=>Math.exp(t), d2:t=>Math.exp(t)*(t-1)/(4*t*t*t),
+    tmin:-1.5, tmax:2, sec:"§10.2", tangent:true, concavity:true, infl:1, snap:0.02,
+    crit:[{t:0,lab:"0"},{t:1,lab:"1"}], hpts:[], vpts:[{x:-1,y:0}],
+    note:"Concave up: t<0 and t>1.  Concave down: 0<t<1.  Inflection at t=1.  Concavity undefined at t=0 (vertical tangent x=−1)."}
 };
 
 let key = window.CH10_PRESET;
@@ -53,6 +94,7 @@ root.innerHTML =
      '<div class="row" style="margin-top:8px"><div><label>min</label><br><input id="tmin" type="number" step="0.1" style="width:84px"></div>'+
        '<div><label>max</label><br><input id="tmax" type="number" step="0.1" style="width:84px"></div>'+
        '<div class="ro">Point: (<span id="xv"></span>, <span id="yv"></span>)</div>'+
+       '<div class="ro" id="slopebox" style="display:none">&nbsp;·&nbsp; dy/dx = <b><span id="sv"></span></b> &nbsp;<span class="hint" id="dcomp"></span></div>'+
        '<div class="hint">Wheel = zoom · drag = pan</div></div>'+
      '<div id="params" class="row" style="margin-top:8px"></div>'+
    '</div>'+
@@ -60,7 +102,10 @@ root.innerHTML =
        '<div class="cvwrap"><canvas id="cv" width="900" height="560"></canvas></div>'+
        '<div id="tblwrap" class="tblwrap"><table id="vtbl"></table></div>'+
      '</div>'+
-     '<div class="hint">The table fills in as you scroll; the glow (and the comet-tail on the curve) is brightest at the current value and fades with distance — each column is tied to its point on the curve.</div></div>'+
+     '<div class="hint">The table fills in as you scroll; the glow (and the comet-tail on the curve) is brightest at the current value and fades with distance — each column is tied to its point on the curve.</div>'+
+     '<div id="taneq" class="taneq" style="display:none"></div>'+
+     '<div id="concbox" class="taneq" style="display:none"></div>'+
+     '<div id="tansummary" class="tansummary" style="display:none"></div></div>'+
    '<footer>Math 102 (Calculus II) — Qatar University · interactive 2-D supplement ('+SEC+').<br>Dr. Yousef Dabboorasad · <a href="mailto:yousef.d@qu.edu.qa">yousef.d@qu.edu.qa</a></footer>'+
   '</div>';
 
@@ -71,6 +116,51 @@ let cur, params={}, dir=1, playing=false, raf=null, view={scale:1,ox:0,oy:0};
 let TS=[], cells=null;
 
 function fmt(v){ if(!isFinite(v)) return ""; const r=Math.round(v*100)/100; return (Math.abs(r)<5e-3?0:r).toString(); }
+function derivAt(t){
+  let dxdt,dydt;
+  if(cur.dx && cur.dy){ dxdt=cur.dx(t,params); dydt=cur.dy(t,params); }
+  else { const span=(cur.tmax-cur.tmin)||1, h=span*1e-5;
+    let ta=t-h, tb=t+h;
+    if(ta<cur.tmin){ ta=cur.tmin; tb=cur.tmin+2*h; }
+    if(tb>cur.tmax){ tb=cur.tmax; ta=cur.tmax-2*h; }
+    dxdt=(cur.x(tb,params)-cur.x(ta,params))/(tb-ta);
+    dydt=(cur.y(tb,params)-cur.y(ta,params))/(tb-ta); }
+  const speed=Math.hypot(dxdt,dydt)||1e-12;
+  return {dxdt,dydt,speed,isH:Math.abs(dydt)/speed<0.08,isV:Math.abs(dxdt)/speed<0.08};
+}
+function fI(v){ let r=Math.round(v*100)/100; if(Math.abs(r)<5e-3) r=0; const s=(Math.abs(r-Math.round(r))<1e-9?String(Math.round(r)):r.toFixed(2)); return s.replace("-","−"); }
+function f2(v){ let r=Math.round(v*100)/100; if(Math.abs(r)<5e-3) r=0; return r.toFixed(2).replace("-","−"); }
+function escHtml(x){ return String(x).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+function snapCrit(t){ if(cur&&cur.crit){ const tol=cur.snap||0.02; for(const c of cur.crit){ if(Math.abs(t-c.t)<tol) return c; } } return null; }
+function snapT(t){ const c=snapCrit(t); return c?c.t:t; }
+function tanConsequence(c){ const x0=cur.x(c.t,params), y0=cur.y(c.t,params), d=derivAt(c.t);
+  if(Math.abs(d.dxdt)<1e-8) return {kind:"V", pt:"("+fI(x0)+", "+fI(y0)+")", eq:"x = "+fI(x0)};
+  if(Math.abs(Math.round((d.dydt/d.dxdt)*100)/100)<5e-3) return {kind:"H", pt:"("+fI(x0)+", "+fI(y0)+")", eq:"y = "+fI(y0)};
+  return {kind:"", pt:"("+fI(x0)+", "+fI(y0)+")", eq:""}; }
+function buildSummary(){ const sm=$("tansummary"); if(!sm||!base.tangent||!cur.crit) return;
+  const V=[],H=[]; for(const c of cur.crit){ const r=tanConsequence(c); const line="t="+c.lab+" → "+r.pt+", "+r.eq;
+    if(r.kind==="V") V.push(line); else if(r.kind==="H") H.push(line); }
+  sm.innerHTML='<div class="smtitle">Tangent consequences</div>'
+    +(H.length?'<div><span class="smh">Horizontal tangents:</span> '+H.join(";  ")+'</div>':'')
+    +(V.length?'<div><span class="smv">Vertical tangents:</span> '+V.join(";  ")+'</div>':'')
+    +(cur.note?'<div class="smn">'+escHtml(cur.note)+'</div>':'');
+  sm.style.display=""; }
+function slopeVertical(d){ return Math.abs(d.dxdt) < 1e-8; }  // undefined ONLY when essentially exactly vertical (independent of the wider visual H/V pulse tolerance)
+function slopeText(d,long){
+  if(slopeVertical(d)) return long?"undefined":"undef";
+  const m=d.dydt/d.dxdt, am=Math.abs(m);
+  if(am<5e-3) return "0";
+  return am>=100? m.toFixed(0) : am>=10? m.toFixed(1) : m.toFixed(2);
+}
+function tangentEq(t){
+  const te=snapT(t), x0=cur.x(te,params), y0=cur.y(te,params), d=derivAt(te);
+  if(Math.abs(d.dxdt)<1e-8) return {eq:"x = "+fI(x0), tag:"vertical tangent", col:"#e64a19"};
+  const m=d.dydt/d.dxdt, b=y0-m*x0, mr=Math.round(m*100)/100;
+  if(Math.abs(mr)<5e-3) return {eq:"y = "+fI(b), tag:"horizontal tangent", col:"#0a8f5b"};
+  const mp = Math.abs(mr-1)<5e-3 ? "x" : Math.abs(mr+1)<5e-3 ? "−x" : f2(m)+"x";
+  const br=Math.round(b*100)/100, bp = Math.abs(br)<5e-3 ? "" : (br<0 ? " − "+f2(Math.abs(b)) : " + "+f2(b));
+  return {eq:"y = "+mp+bp, tag:"", col:"#5e35b1"};
+}
 
 function tsamples(a,b){
   const span=b-a, mant=[1,1.5,2,2.5,3,4,5,6,8], clean={1:0,2:0,5:0,2.5:1,3:1,4:1,1.5:2,6:2,8:2};
@@ -87,15 +177,29 @@ function tsamples(a,b){
 
 function buildTable(){
   const a=parseFloat($("tmin").value), b=parseFloat($("tmax").value);
-  TS=tsamples(a,b);
-  const tbl=$("vtbl"); tbl.innerHTML=""; cells={t:[],x:[],y:[]};
+  let ts=tsamples(a,b).map(t=>({t,crit:false,lab:fmt(t),kind:""}));
+  if(base.tangent && cur.crit){
+    const eps=(b-a)*1e-4, alo=(cur.tmin!=null?cur.tmin:a), ahi=(cur.tmax!=null?cur.tmax:b);
+    for(const c of cur.crit){ if(c.t<alo-1e-6||c.t>ahi+1e-6) continue;
+      const d=derivAt(c.t); let kind=""; if(Math.abs(d.dxdt)<1e-8) kind="V"; else if(Math.abs(Math.round((d.dydt/d.dxdt)*100)/100)<5e-3) kind="H";
+      const col={t:c.t,crit:true,lab:c.lab,kind};
+      const idx=ts.findIndex(o=>Math.abs(o.t-c.t)<eps);
+      if(idx>=0) ts[idx]=col; else ts.push(col);
+    }
+    ts.sort((p,q)=>p.t-q.t);
+  }
+  TS=ts;
+  const tbl=$("vtbl"); tbl.innerHTML=""; cells={t:[],x:[],y:[]}; if(base.tangent){ cells.dydx=[]; cells.tan=[]; }
   const mkrow=(keyName,label)=>{
     const tr=document.createElement("tr");
     const th=document.createElement("th"); th.textContent=label; th.className="rl"; tr.appendChild(th);
-    for(let i=0;i<TS.length;i++){ const td=document.createElement("td"); tr.appendChild(td); cells[keyName].push(td); }
+    for(let i=0;i<TS.length;i++){ const td=document.createElement("td");
+      if(TS[i].crit){ td.className="crit"+(TS[i].kind==="V"?" critV":TS[i].kind==="H"?" critH":""); }
+      tr.appendChild(td); cells[keyName].push(td); }
     tbl.appendChild(tr);
   };
   mkrow("t","t"); mkrow("x","x"); mkrow("y","y");
+  if(base.tangent){ mkrow("dydx","dy/dx"); mkrow("tan","tangent line"); }
 }
 
 function updateTable(current){
@@ -103,14 +207,17 @@ function updateTable(current){
   const a=parseFloat($("tmin").value), b=parseFloat($("tmax").value);
   const sig=(b-a)*0.075 || 1; let curCol=0;
   for(let i=0;i<TS.length;i++){
-    const ti=TS[i], filled = ti <= current+1e-9;
-    const d=Math.abs(ti-current), g=Math.exp(-(d/sig)*(d/sig));
+    const C=TS[i], ti=C.t, filled = ti <= current+1e-9;
+    const dd2=Math.abs(ti-current), g=Math.exp(-(dd2/sig)*(dd2/sig));
     const bg = g>0.012 ? "rgba("+RED+","+(0.82*g).toFixed(3)+")" : "";
     const xi=cur.x(ti,params), yi=cur.y(ti,params);
-    cells.t[i].textContent = filled ? fmt(ti) : "";
+    if(C.crit) cells.t[i].innerHTML = filled ? ('<b>'+C.lab+'</b><br><span class="sub">'+fmt(ti)+'</span>') : "";
+    else cells.t[i].textContent = filled ? fmt(ti) : "";
     cells.x[i].textContent = filled && isFinite(xi) ? fmt(xi) : "";
     cells.y[i].textContent = filled && isFinite(yi) ? fmt(yi) : "";
     cells.t[i].style.background=bg; cells.x[i].style.background=bg; cells.y[i].style.background=bg;
+    if(cells.dydx){ const dd=derivAt(ti); cells.dydx[i].textContent = filled ? slopeText(dd,true) : ""; cells.dydx[i].style.background=bg; }
+    if(cells.tan){ cells.tan[i].textContent = filled ? tangentEq(ti).eq : ""; cells.tan[i].style.background=bg; }
     if(filled) curCol=i;
   }
   const cell=cells.t[curCol];
@@ -118,7 +225,7 @@ function updateTable(current){
 }
 
 function setActive(src){
-  cur={x:src.x, y:src.y, tmin:src.tmin, tmax:src.tmax};
+  cur={x:src.x, y:src.y, tmin:src.tmin, tmax:src.tmax, tangent:src.tangent, dx:src.dx, dy:src.dy, hpts:src.hpts, vpts:src.vpts, crit:src.crit, snap:src.snap, d2:src.d2, concavity:src.concavity, infl:src.infl, note:src.note};
   $("t").min=src.tmin; $("t").max=src.tmax; $("t").step=(src.tmax-src.tmin)/1000; $("t").value=src.tmin;
   $("tmin").value=(+src.tmin).toFixed(2); $("tmax").value=(+src.tmax).toFixed(2);
   buildTable();
@@ -178,6 +285,7 @@ function draw(){
   for(let X=Math.ceil(xL/gx)*gx; X<=xR; X+=gx){ if(Math.abs(X)<1e-9)continue; ctx.fillText((Math.abs(gx)<1?X.toFixed(1):X.toFixed(0)), TX(X)+2, TY(0)+13); }
   for(let Y=Math.ceil(yB/gy)*gy; Y<=yT; Y+=gy){ if(Math.abs(Y)<1e-9)continue; ctx.fillText((Math.abs(gy)<1?Y.toFixed(1):Y.toFixed(0)), TX(0)+5, TY(Y)-3); }
   const a=parseFloat($("tmin").value), b=parseFloat($("tmax").value), tc=parseFloat($("t").value);
+  const teff = cur.tangent ? snapT(tc) : tc;
   // full path (faint)
   ctx.strokeStyle="#b9d4ec"; ctx.lineWidth=2; ctx.beginPath(); let st=false;
   for(let i=0;i<=1400;i++){ const t=a+(b-a)*i/1400, X=TX(cur.x(t,params)), Y=TY(cur.y(t,params));
@@ -188,6 +296,16 @@ function draw(){
   for(let i=0;i<=1400;i++){ const t=a+(tc-a)*i/1400, X=TX(cur.x(t,params)), Y=TY(cur.y(t,params));
     if(!isFinite(X)||!isFinite(Y)){st=false;continue;} st?ctx.lineTo(X,Y):(ctx.moveTo(X,Y),st=true); }
   ctx.stroke();
+  // §10.2 moving tangent line (tangent mode only) — under the comet-tail & point
+  if(cur.tangent){
+    const pT=cur.x(teff,params), qT=cur.y(teff,params), dT=derivAt(teff);
+    ctx.save(); ctx.lineWidth=(dT.isH||dT.isV)?3.6:2.4; ctx.setLineDash([7,5]);
+    ctx.strokeStyle = dT.isV?"#e64a19" : dT.isH?"#0a8f5b" : "#5e35b1";
+    const vx=dT.dxdt, vy=dT.dydt; ctx.beginPath();   // draw from the DIRECTION VECTOR (x',y'): (x,y) = (pT,qT) + s*(vx,vy)
+    if(Math.abs(vx)>=Math.abs(vy)){ const m=vy/vx; ctx.moveTo(TX(xL),TY(qT+m*(xL-pT))); ctx.lineTo(TX(xR),TY(qT+m*(xR-pT))); }
+    else { const mi=vx/vy; ctx.moveTo(TX(pT+mi*(yB-qT)),TY(yB)); ctx.lineTo(TX(pT+mi*(yT-qT)),TY(yT)); }
+    ctx.stroke(); ctx.setLineDash([]); ctx.restore();
+  }
   // comet tail: red, brightest at the point, fading with the SAME distance decay as the table glow
   const sig=(b-a)*0.075 || 1, tailSpan=3*sig, MSEG=46;
   ctx.lineWidth=4; ctx.lineCap="round"; let pX=null,pY=null;
@@ -204,15 +322,41 @@ function draw(){
   }
   ctx.lineCap="butt";
   // moving point + orientation arrow
-  const px=cur.x(tc,params), py=cur.y(tc,params), dt=(b-a)/2000;
-  let ddx=(cur.x(tc+dt,params)-px)*dir, ddy=(cur.y(tc+dt,params)-py)*dir, L=Math.hypot(ddx,ddy)||1; ddx/=L; ddy/=L;
+  const px=cur.x(teff,params), py=cur.y(teff,params), dt=(b-a)/2000;
+  let ddx=(cur.x(teff+dt,params)-px)*dir, ddy=(cur.y(teff+dt,params)-py)*dir, L=Math.hypot(ddx,ddy)||1; ddx/=L; ddy/=L;
   const SX=TX(px), SY=TY(py), ax=SX+ddx*34, ay=SY-ddy*34;
   ctx.strokeStyle="#C42327"; ctx.fillStyle="#C42327"; ctx.lineWidth=2.5;
   ctx.beginPath();ctx.moveTo(SX,SY);ctx.lineTo(ax,ay);ctx.stroke();
   const an=Math.atan2(ay-SY,ax-SX);
   ctx.beginPath();ctx.moveTo(ax,ay);ctx.lineTo(ax-10*Math.cos(an-0.4),ay-10*Math.sin(an-0.4));ctx.lineTo(ax-10*Math.cos(an+0.4),ay-10*Math.sin(an+0.4));ctx.closePath();ctx.fill();
   ctx.beginPath();ctx.arc(SX,SY,5,0,TAU);ctx.fill();
-  $("tval").textContent=tc.toFixed(3); $("xv").textContent=px.toFixed(3); $("yv").textContent=py.toFixed(3);
+  // §10.2 H/V tangent reference markers + pulse + live slope readout
+  if(cur.tangent){
+    const dR=derivAt(tc), dRead=derivAt(snapT(tc));   // dR: actual t (visual H/V flash) · dRead: snapped (slope readout)
+    const markHV=(pts,col,active)=>{ if(!pts||!pts.length) return;
+      let ni=0,nd=1e9; pts.forEach((P0,i)=>{ const q=Math.hypot(P0.x-px,P0.y-py); if(q<nd){nd=q;ni=i;} });
+      pts.forEach((P0,i)=>{ const near=active&&i===ni, X=TX(P0.x), Y=TY(P0.y);
+        const r=near? 7+1.6*Math.sin(Date.now()/110) : 4.5;
+        ctx.lineWidth=2; ctx.strokeStyle=col; ctx.fillStyle=near?col:"#ffffff";
+        ctx.beginPath(); ctx.arc(X,Y,r,0,TAU); ctx.fill(); ctx.stroke(); }); };
+    markHV(cur.vpts,"#e64a19",dR.isV);
+    markHV(cur.hpts,"#0a8f5b",dR.isH);
+    ctx.font="bold 12px system-ui"; ctx.textAlign="center";
+    if(cur.hpts){ ctx.fillStyle="#0a8f5b"; cur.hpts.forEach(P0=>ctx.fillText("H", TX(P0.x)+(P0.x>=0?15:-15), TY(P0.y)+4)); }
+    if(cur.vpts){ ctx.fillStyle="#e64a19"; cur.vpts.forEach(P0=>ctx.fillText("V", TX(P0.x), TY(P0.y)+(P0.y>=0?-11:18))); }
+    ctx.textAlign="start";
+    const _sv=$("sv"); if(_sv){ _sv.textContent=slopeText(dRead,true);
+      _sv.style.color = slopeVertical(dRead)?"#e64a19" : dRead.isH?"#0a8f5b" : "#1d2733";
+      const _dc=$("dcomp"); if(_dc) _dc.textContent="(dy/dt = "+fmt(dRead.dydt)+",  dx/dt = "+fmt(dRead.dxdt)+")"; }
+    const _eq=$("taneq"); if(_eq){ const te=tangentEq(tc);
+      _eq.innerHTML='<span class="lab">Tangent line at current point:</span> <span class="eq" style="color:'+te.col+'">'+te.eq+'</span>'+(te.tag?' <span class="tag">('+te.tag+')</span>':''); }
+    if(base.concavity){ const cc=$("concbox"); if(cc){ const xp=cur.dx?cur.dx(teff,params):2*teff; let ct,cco;
+      if(Math.abs(xp)<1e-6){ ct="undefined  (x' = 0, vertical tangent)"; cco="#e64a19"; }
+      else if(cur.infl!=null && Math.abs(teff-cur.infl)<1e-6){ ct="inflection point  (d²y/dx² = 0)"; cco="#5e35b1"; }
+      else { const d2v=cur.d2?cur.d2(teff,params):0; ct=d2v>0?"concave up  (d²y/dx² > 0)":"concave down  (d²y/dx² < 0)"; cco=d2v>0?"#0a8f5b":"#e64a19"; }
+      cc.innerHTML='<span class="lab">Concavity:</span> <span class="eq" style="color:'+cco+'">'+escHtml(ct)+'</span>'; } }
+  }
+  const _sc=cur.tangent?snapCrit(tc):null; $("tval").textContent=_sc?_sc.lab:tc.toFixed(3); $("xv").textContent=(Math.abs(px)<5e-4?0:px).toFixed(3); $("yv").textContent=(Math.abs(py)<5e-4?0:py).toFixed(3);
   updateTable(tc);
 }
 
@@ -241,7 +385,9 @@ window.addEventListener("mouseup",()=>drag=null);
 
 $("ttl").textContent = base.label;
 $("eqn").textContent = base.eqn;
+if(base.tangent){ const _sb=$("slopebox"); if(_sb) _sb.style.display=""; const _te=$("taneq"); if(_te) _te.style.display=""; } if(base.concavity){ const _cb=$("concbox"); if(_cb) _cb.style.display=""; }
 buildParams();
 setActive(base.variants?base.variants[0]:base);
+if(base.tangent) buildSummary();
 draw();
 })();
