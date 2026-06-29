@@ -35,6 +35,9 @@ const P = {
 let key = window.CH10_PRESET;
 if(!P[key]){ key = new URLSearchParams(location.search).get("p") || "ex2-unit-circle"; }
 const base = P[key];
+// Section label is PER-PAGE: a preset may set its own .sec; else derive "§10.N" from the
+// page's ch10-N- filename. Not hard-coded to one section in the shared engine.
+const SEC = base.sec || ("§10." + (((location.pathname||"").match(/ch10-(\d+)-/) || [0,"1"])[1]));
 
 const root = document.getElementById("app") || document.body;
 function el(tag, attrs, html){ const e=document.createElement(tag); if(attrs) for(const k in attrs) e.setAttribute(k,attrs[k]); if(html!=null) e.innerHTML=html; return e; }
@@ -58,7 +61,7 @@ root.innerHTML =
        '<div id="tblwrap" class="tblwrap"><table id="vtbl"></table></div>'+
      '</div>'+
      '<div class="hint">The table fills in as you scroll; the glow (and the comet-tail on the curve) is brightest at the current value and fades with distance — each column is tied to its point on the curve.</div></div>'+
-   '<footer>Math 102 (Calculus II) — Qatar University · interactive 2-D supplement (§10.1).<br>Dr. Yousef Dabboorasad · <a href="mailto:yousef.d@qu.edu.qa">yousef.d@qu.edu.qa</a></footer>'+
+   '<footer>Math 102 (Calculus II) — Qatar University · interactive 2-D supplement ('+SEC+').<br>Dr. Yousef Dabboorasad · <a href="mailto:yousef.d@qu.edu.qa">yousef.d@qu.edu.qa</a></footer>'+
   '</div>';
 
 const $=id=>document.getElementById(id);
