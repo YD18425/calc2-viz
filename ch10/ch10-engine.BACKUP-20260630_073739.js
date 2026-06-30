@@ -8,6 +8,8 @@
 (function(){
 const TAU = 2*Math.PI;
 const RED = "196,35,39";
+const FAM={axis:"#d99a00",sixth:"#e2702a",quarter:"#1e9646",third:"#8e44ad"};
+const FAMSTRONG={axis:"rgba(224,168,0,0.55)",sixth:"rgba(226,112,42,0.50)",quarter:"rgba(30,150,70,0.45)",third:"rgba(142,68,173,0.45)"};
 const P = {
   "ex1-parabola":     {label:"Example 1 — x = t² − 2t,  y = t + 1", eqn:"x = t² − 2t,  y = t + 1   ⇒   x = y² − 4y + 3", x:t=>t*t-2*t, y:t=>t+1, tmin:-2, tmax:4},
   "ex2-unit-circle":  {label:"Example 2 — x = cos t,  y = sin t (unit circle, CCW)", eqn:"x = cos t,  y = sin t,  0 ≤ t ≤ 2π", x:t=>Math.cos(t), y:t=>Math.sin(t), tmin:0, tmax:TAU},
@@ -70,7 +72,94 @@ const P = {
     x:t=>t*t-1, y:t=>Math.exp(t)-1, dx:t=>2*t, dy:t=>Math.exp(t), d2:t=>Math.exp(t)*(t-1)/(4*t*t*t),
     tmin:-1.5, tmax:2, sec:"§10.2", tangent:true, concavity:true, infl:1, snap:0.02,
     crit:[{t:0,lab:"0"},{t:1,lab:"1"}], hpts:[], vpts:[{x:-1,y:0}],
-    note:"Concave up: t<0 and t>1.  Concave down: 0<t<1.  Inflection at t=1.  Concavity undefined at t=0 (vertical tangent x=−1)."}
+    note:"Concave up: t<0 and t>1.  Concave down: 0<t<1.  Inflection at t=1.  Concavity undefined at t=0 (vertical tangent x=−1)."},
+  "rsin-theta": {
+    label:"§10.3 Example — r = sin θ  (a circle through the pole)",
+    eqn:"r = sin θ,  0 ≤ θ ≤ 2π        x = r cos θ,  y = r sin θ        ⇒  x² + (y − ½)² = ¼",
+    sec:"§10.3", polar:true,
+    r:(t)=>Math.sin(t), x:(t)=>Math.sin(t)*Math.cos(t), y:(t)=>Math.sin(t)*Math.sin(t),
+    tmin:0, tmax:TAU, rmax:1, rings:[0.25,0.5,0.75,1.0],
+    mainAngles:[
+      {t:0,lab:"0",fam:"axis"},{t:Math.PI/6,lab:"π/6",fam:"sixth"},{t:Math.PI/4,lab:"π/4",fam:"quarter"},
+      {t:Math.PI/3,lab:"π/3",fam:"third"},{t:Math.PI/2,lab:"π/2",fam:"axis"},{t:2*Math.PI/3,lab:"2π/3",fam:"third"},
+      {t:3*Math.PI/4,lab:"3π/4",fam:"quarter"},{t:5*Math.PI/6,lab:"5π/6",fam:"sixth"},{t:Math.PI,lab:"π",fam:"axis"},
+      {t:7*Math.PI/6,lab:"7π/6",fam:"sixth"},{t:5*Math.PI/4,lab:"5π/4",fam:"quarter"},{t:4*Math.PI/3,lab:"4π/3",fam:"third"},
+      {t:3*Math.PI/2,lab:"3π/2",fam:"axis"},{t:5*Math.PI/3,lab:"5π/3",fam:"third"},{t:7*Math.PI/4,lab:"7π/4",fam:"quarter"},
+      {t:11*Math.PI/6,lab:"11π/6",fam:"sixth"},{t:2*Math.PI,lab:"2π",fam:"axis"}
+    ],
+    notes:[{t:Math.PI/2,txt:"r=1"},{t:0,txt:"pole r=0"}],
+    note:"For π<θ<2π, r<0 → the point is plotted opposite (θ+π); the same circle is retraced."
+  },
+  "rcos-theta": {
+    label:"§10.3 Example — r = cos θ  (circle on the polar axis)",
+    eqn:"r = cos θ,  0 ≤ θ ≤ 2π        x = r cos θ,  y = r sin θ        ⇒  (x − ½)² + y² = ¼",
+    sec:"§10.3", polar:true,
+    r:(t)=>Math.cos(t), x:(t)=>Math.cos(t)*Math.cos(t), y:(t)=>Math.cos(t)*Math.sin(t),
+    tmin:0, tmax:TAU, rmax:1, rings:[0.25,0.5,0.75,1.0],
+    mainAngles:[{t:0,lab:"0",fam:"axis"},{t:Math.PI/6,lab:"π/6",fam:"sixth"},{t:Math.PI/4,lab:"π/4",fam:"quarter"},{t:Math.PI/3,lab:"π/3",fam:"third"},{t:Math.PI/2,lab:"π/2",fam:"axis"},{t:2*Math.PI/3,lab:"2π/3",fam:"third"},{t:3*Math.PI/4,lab:"3π/4",fam:"quarter"},{t:5*Math.PI/6,lab:"5π/6",fam:"sixth"},{t:Math.PI,lab:"π",fam:"axis"},{t:7*Math.PI/6,lab:"7π/6",fam:"sixth"},{t:5*Math.PI/4,lab:"5π/4",fam:"quarter"},{t:4*Math.PI/3,lab:"4π/3",fam:"third"},{t:3*Math.PI/2,lab:"3π/2",fam:"axis"},{t:5*Math.PI/3,lab:"5π/3",fam:"third"},{t:7*Math.PI/4,lab:"7π/4",fam:"quarter"},{t:11*Math.PI/6,lab:"11π/6",fam:"sixth"},{t:2*Math.PI,lab:"2π",fam:"axis"}],
+    notes:[{t:0,txt:"r=1"},{t:Math.PI/2,txt:"pole r=0"}],
+    note:"cos θ<0 on π/2<θ<3π/2 → r<0, plotted opposite (θ+π); the same circle (right half) is retraced."
+  },
+  "cardioid-2m2sin": {
+    label:"§10.3 Example — r = 2 − 2 sin θ  (cardioid)",
+    eqn:"r = 2 − 2 sin θ,  0 ≤ θ ≤ 2π",
+    sec:"§10.3", polar:true,
+    r:(t)=>2-2*Math.sin(t), x:(t)=>(2-2*Math.sin(t))*Math.cos(t), y:(t)=>(2-2*Math.sin(t))*Math.sin(t),
+    tmin:0, tmax:TAU, rmax:4, rings:[1,2,3,4],
+    mainAngles:[{t:0,lab:"0",fam:"axis"},{t:Math.PI/6,lab:"π/6",fam:"sixth"},{t:Math.PI/4,lab:"π/4",fam:"quarter"},{t:Math.PI/3,lab:"π/3",fam:"third"},{t:Math.PI/2,lab:"π/2",fam:"axis"},{t:2*Math.PI/3,lab:"2π/3",fam:"third"},{t:3*Math.PI/4,lab:"3π/4",fam:"quarter"},{t:5*Math.PI/6,lab:"5π/6",fam:"sixth"},{t:Math.PI,lab:"π",fam:"axis"},{t:7*Math.PI/6,lab:"7π/6",fam:"sixth"},{t:5*Math.PI/4,lab:"5π/4",fam:"quarter"},{t:4*Math.PI/3,lab:"4π/3",fam:"third"},{t:3*Math.PI/2,lab:"3π/2",fam:"axis"},{t:5*Math.PI/3,lab:"5π/3",fam:"third"},{t:7*Math.PI/4,lab:"7π/4",fam:"quarter"},{t:11*Math.PI/6,lab:"11π/6",fam:"sixth"},{t:2*Math.PI,lab:"2π",fam:"axis"}],
+    notes:[{t:3*Math.PI/2,txt:"max r=4"},{t:Math.PI/2,txt:"cusp r=0"}],
+    note:"Cardioid r=a(1−sinθ), a=2; cusp at the pole at θ=π/2."
+  },
+  "cardioid-1pcos": {
+    label:"§10.3 Example — r = 1 + cos θ  (cardioid)",
+    eqn:"r = 1 + cos θ,  0 ≤ θ ≤ 2π",
+    sec:"§10.3", polar:true,
+    r:(t)=>1+Math.cos(t), x:(t)=>(1+Math.cos(t))*Math.cos(t), y:(t)=>(1+Math.cos(t))*Math.sin(t),
+    tmin:0, tmax:TAU, rmax:2, rings:[0.5,1,1.5,2],
+    mainAngles:[{t:0,lab:"0",fam:"axis"},{t:Math.PI/6,lab:"π/6",fam:"sixth"},{t:Math.PI/4,lab:"π/4",fam:"quarter"},{t:Math.PI/3,lab:"π/3",fam:"third"},{t:Math.PI/2,lab:"π/2",fam:"axis"},{t:2*Math.PI/3,lab:"2π/3",fam:"third"},{t:3*Math.PI/4,lab:"3π/4",fam:"quarter"},{t:5*Math.PI/6,lab:"5π/6",fam:"sixth"},{t:Math.PI,lab:"π",fam:"axis"},{t:7*Math.PI/6,lab:"7π/6",fam:"sixth"},{t:5*Math.PI/4,lab:"5π/4",fam:"quarter"},{t:4*Math.PI/3,lab:"4π/3",fam:"third"},{t:3*Math.PI/2,lab:"3π/2",fam:"axis"},{t:5*Math.PI/3,lab:"5π/3",fam:"third"},{t:7*Math.PI/4,lab:"7π/4",fam:"quarter"},{t:11*Math.PI/6,lab:"11π/6",fam:"sixth"},{t:2*Math.PI,lab:"2π",fam:"axis"}],
+    notes:[{t:0,txt:"max r=2"},{t:Math.PI,txt:"cusp r=0"}],
+    note:"Cardioid r=a(1+cosθ), a=1; cusp at the pole at θ=π."
+  },
+  "limacon-3p2cos": {
+    label:"§10.3 Example — r = 3 + 2 cos θ  (dimpled limaçon)",
+    eqn:"r = 3 + 2 cos θ,  0 ≤ θ ≤ 2π",
+    sec:"§10.3", polar:true,
+    r:(t)=>3+2*Math.cos(t), x:(t)=>(3+2*Math.cos(t))*Math.cos(t), y:(t)=>(3+2*Math.cos(t))*Math.sin(t),
+    tmin:0, tmax:TAU, rmax:5, rings:[1,2,3,4,5],
+    mainAngles:[{t:0,lab:"0",fam:"axis"},{t:Math.PI/6,lab:"π/6",fam:"sixth"},{t:Math.PI/4,lab:"π/4",fam:"quarter"},{t:Math.PI/3,lab:"π/3",fam:"third"},{t:Math.PI/2,lab:"π/2",fam:"axis"},{t:2*Math.PI/3,lab:"2π/3",fam:"third"},{t:3*Math.PI/4,lab:"3π/4",fam:"quarter"},{t:5*Math.PI/6,lab:"5π/6",fam:"sixth"},{t:Math.PI,lab:"π",fam:"axis"},{t:7*Math.PI/6,lab:"7π/6",fam:"sixth"},{t:5*Math.PI/4,lab:"5π/4",fam:"quarter"},{t:4*Math.PI/3,lab:"4π/3",fam:"third"},{t:3*Math.PI/2,lab:"3π/2",fam:"axis"},{t:5*Math.PI/3,lab:"5π/3",fam:"third"},{t:7*Math.PI/4,lab:"7π/4",fam:"quarter"},{t:11*Math.PI/6,lab:"11π/6",fam:"sixth"},{t:2*Math.PI,lab:"2π",fam:"axis"}],
+    notes:[{t:0,txt:"max r=5"},{t:Math.PI,txt:"min r=1"}],
+    note:"Dimpled limaçon r=a+b cosθ, a=3,b=2 (1<a/b<2)."
+  },
+  "limacon-1m2sin": {
+    label:"§10.3 Example — r = 1 − 2 sin θ  (limaçon, inner loop)",
+    eqn:"r = 1 − 2 sin θ,  0 ≤ θ ≤ 2π   (r<0 ⇒ inner loop, plotted at θ+π)",
+    sec:"§10.3", polar:true,
+    r:(t)=>1-2*Math.sin(t), x:(t)=>(1-2*Math.sin(t))*Math.cos(t), y:(t)=>(1-2*Math.sin(t))*Math.sin(t),
+    tmin:0, tmax:TAU, rmax:3, rings:[1,2,3],
+    mainAngles:[{t:0,lab:"0",fam:"axis"},{t:Math.PI/6,lab:"π/6",fam:"sixth"},{t:Math.PI/4,lab:"π/4",fam:"quarter"},{t:Math.PI/3,lab:"π/3",fam:"third"},{t:Math.PI/2,lab:"π/2",fam:"axis"},{t:2*Math.PI/3,lab:"2π/3",fam:"third"},{t:3*Math.PI/4,lab:"3π/4",fam:"quarter"},{t:5*Math.PI/6,lab:"5π/6",fam:"sixth"},{t:Math.PI,lab:"π",fam:"axis"},{t:7*Math.PI/6,lab:"7π/6",fam:"sixth"},{t:5*Math.PI/4,lab:"5π/4",fam:"quarter"},{t:4*Math.PI/3,lab:"4π/3",fam:"third"},{t:3*Math.PI/2,lab:"3π/2",fam:"axis"},{t:5*Math.PI/3,lab:"5π/3",fam:"third"},{t:7*Math.PI/4,lab:"7π/4",fam:"quarter"},{t:11*Math.PI/6,lab:"11π/6",fam:"sixth"},{t:2*Math.PI,lab:"2π",fam:"axis"}],
+    notes:[{t:3*Math.PI/2,txt:"max r=3"}],
+    note:"Limaçon inner loop r=a−b sinθ, a=1,b=2; r<0 on π/6<θ<5π/6 traces the inner loop."
+  },
+  "rose-sin2": {
+    label:"§10.3 Example — r = sin 2θ  (four-petaled rose)",
+    eqn:"r = sin 2θ,  0 ≤ θ ≤ 2π   (n=2 even ⇒ 2n=4 petals)",
+    sec:"§10.3", polar:true,
+    r:(t)=>Math.sin(2*t), x:(t)=>Math.sin(2*t)*Math.cos(t), y:(t)=>Math.sin(2*t)*Math.sin(t),
+    tmin:0, tmax:TAU, rmax:1, rings:[0.25,0.5,0.75,1],
+    mainAngles:[{t:0,lab:"0",fam:"axis"},{t:Math.PI/6,lab:"π/6",fam:"sixth"},{t:Math.PI/4,lab:"π/4",fam:"quarter"},{t:Math.PI/3,lab:"π/3",fam:"third"},{t:Math.PI/2,lab:"π/2",fam:"axis"},{t:2*Math.PI/3,lab:"2π/3",fam:"third"},{t:3*Math.PI/4,lab:"3π/4",fam:"quarter"},{t:5*Math.PI/6,lab:"5π/6",fam:"sixth"},{t:Math.PI,lab:"π",fam:"axis"},{t:7*Math.PI/6,lab:"7π/6",fam:"sixth"},{t:5*Math.PI/4,lab:"5π/4",fam:"quarter"},{t:4*Math.PI/3,lab:"4π/3",fam:"third"},{t:3*Math.PI/2,lab:"3π/2",fam:"axis"},{t:5*Math.PI/3,lab:"5π/3",fam:"third"},{t:7*Math.PI/4,lab:"7π/4",fam:"quarter"},{t:11*Math.PI/6,lab:"11π/6",fam:"sixth"},{t:2*Math.PI,lab:"2π",fam:"axis"}],
+    notes:[{t:Math.PI/4,txt:"petal r=1"}],
+    note:"Rose r=sin 2θ; n=2 even ⇒ 4 petals; negative-r petals plotted at θ+π."
+  },
+  "spiral": {
+    label:"§10.3 Example — r = θ  (Archimedean spiral)",
+    eqn:"r = θ,  θ ≥ 0        as θ grows, r grows",
+    sec:"§10.3", polar:true,
+    r:(t)=>t, x:(t)=>t*Math.cos(t), y:(t)=>t*Math.sin(t),
+    tmin:0, tmax:TAU, rmax:2*Math.PI, rings:[1,2,3,4,5,6],
+    mainAngles:[{t:0,lab:"0",fam:"axis"},{t:Math.PI/6,lab:"π/6",fam:"sixth"},{t:Math.PI/4,lab:"π/4",fam:"quarter"},{t:Math.PI/3,lab:"π/3",fam:"third"},{t:Math.PI/2,lab:"π/2",fam:"axis"},{t:2*Math.PI/3,lab:"2π/3",fam:"third"},{t:3*Math.PI/4,lab:"3π/4",fam:"quarter"},{t:5*Math.PI/6,lab:"5π/6",fam:"sixth"},{t:Math.PI,lab:"π",fam:"axis"},{t:7*Math.PI/6,lab:"7π/6",fam:"sixth"},{t:5*Math.PI/4,lab:"5π/4",fam:"quarter"},{t:4*Math.PI/3,lab:"4π/3",fam:"third"},{t:3*Math.PI/2,lab:"3π/2",fam:"axis"},{t:5*Math.PI/3,lab:"5π/3",fam:"third"},{t:7*Math.PI/4,lab:"7π/4",fam:"quarter"},{t:11*Math.PI/6,lab:"11π/6",fam:"sixth"},{t:2*Math.PI,lab:"2π",fam:"axis"}],
+    notes:[],
+    note:"Archimedean spiral r=θ: distance from the pole grows with the angle."
+  }
 };
 
 let key = window.CH10_PRESET;
@@ -85,7 +174,7 @@ function el(tag, attrs, html){ const e=document.createElement(tag); if(attrs) fo
 root.innerHTML =
   '<header><h1 id="ttl"></h1><p id="eqn"></p></header>'+
   '<div class="wrap">'+
-   '<div class="panel"><div id="variants" class="row"></div>'+
+   '<div class="panel"><div id="variants" class="row"></div><div id="snaps" class="row"></div>'+
      '<div class="row">'+
        '<div><button id="play">▶ Play</button> <button id="dir" class="sec">⇄ Reverse</button> <button id="reset" class="sec">Reset</button></div>'+
        '<div><label>Speed</label><br><input id="speed" type="range" min="0.2" max="3" step="0.1" value="1"></div>'+
@@ -96,6 +185,7 @@ root.innerHTML =
        '<div class="ro">Point: (<span id="xv"></span>, <span id="yv"></span>)</div>'+
        '<div class="ro" id="slopebox" style="display:none">&nbsp;·&nbsp; dy/dx = <b><span id="sv"></span></b> &nbsp;<span class="hint" id="dcomp"></span></div>'+
        '<div class="hint">Wheel = zoom · drag = pan</div></div>'+
+     '<div class="row"><div class="ro" id="polarbox" style="display:none"></div></div>'+
      '<div id="params" class="row" style="margin-top:8px"></div>'+
    '</div>'+
    '<div class="panel"><div class="vizrow">'+
@@ -225,10 +315,10 @@ function updateTable(current){
 }
 
 function setActive(src){
-  cur={x:src.x, y:src.y, tmin:src.tmin, tmax:src.tmax, tangent:src.tangent, dx:src.dx, dy:src.dy, hpts:src.hpts, vpts:src.vpts, crit:src.crit, snap:src.snap, d2:src.d2, concavity:src.concavity, infl:src.infl, note:src.note};
+  cur={x:src.x, y:src.y, tmin:src.tmin, tmax:src.tmax, tangent:src.tangent, dx:src.dx, dy:src.dy, hpts:src.hpts, vpts:src.vpts, crit:src.crit, snap:src.snap, d2:src.d2, concavity:src.concavity, infl:src.infl, note:src.note, polar:src.polar, r:src.r, mainAngles:src.mainAngles, rings:src.rings, rmax:src.rmax, notes:src.notes};
   $("t").min=src.tmin; $("t").max=src.tmax; $("t").step=(src.tmax-src.tmin)/1000; $("t").value=src.tmin;
   $("tmin").value=(+src.tmin).toFixed(2); $("tmax").value=(+src.tmax).toFixed(2);
-  buildTable();
+  (base.polar?buildTablePolar:buildTable)();
 }
 
 if(base.variants){
@@ -253,6 +343,87 @@ function buildParams(){
   }
 }
 
+// ===================== §10.3 polar mode (gated behind base.polar) =====================
+function buildTablePolar(){
+  TS = (cur.mainAngles||[]).map(a=>({t:a.t,lab:a.lab,fam:a.fam}));
+  const tbl=$("vtbl"); tbl.innerHTML=""; cells={th:[],r:[],x:[],y:[]};
+  const mk=(keyName,label)=>{ const tr=document.createElement("tr");
+    const th=document.createElement("th"); th.textContent=label; th.className="rl"; tr.appendChild(th);
+    for(let i=0;i<TS.length;i++){ const td=document.createElement("td");
+      td.className="pcol fam-"+TS[i].fam; td.title="snap θ = "+TS[i].lab;
+      td.onclick=()=>{ $("t").value=TS[i].t; draw(); };
+      tr.appendChild(td); cells[keyName].push(td); }
+    tbl.appendChild(tr); };
+  mk("th","θ"); mk("r","r"); mk("x","x"); mk("y","y");
+}
+function updateTablePolar(current){
+  if(!cells||!cells.th) return;
+  let near=0,nd=1e9; for(let i=0;i<TS.length;i++){ const d=Math.abs(TS[i].t-current); if(d<nd){nd=d;near=i;} }
+  for(let i=0;i<TS.length;i++){ const C=TS[i], ti=C.t, filled=ti<=current+1e-9;
+    const rr=cur.r(ti), xx=cur.x(ti,params), yy=cur.y(ti,params), active=(i===near);
+    cells.th[i].textContent = filled?C.lab:"";
+    cells.r[i].textContent  = filled?f2(rr):"";
+    cells.x[i].textContent  = filled?f2(xx):"";
+    cells.y[i].textContent  = filled?f2(yy):"";
+    [cells.th[i],cells.r[i],cells.x[i],cells.y[i]].forEach(td=>{
+      td.classList.toggle("active",active);
+      td.style.background = active?(FAMSTRONG[C.fam]||""):"";
+    });
+  }
+  const cell=cells.th[near]; if(cell&&tblwrap){ tblwrap.scrollLeft=Math.max(0,(cell.offsetLeft||0)-(tblwrap.clientWidth||300)*0.5); }
+}
+function buildSnaps(){ const box=$("snaps"); if(!box) return; box.innerHTML="";
+  const lab=document.createElement("span"); lab.className="hint"; lab.textContent="Snap θ: "; box.appendChild(lab);
+  (base.mainAngles||[]).forEach(ag=>{ const b=document.createElement("button"); b.className="snapbtn"; b.textContent=ag.lab;
+    b.onclick=()=>{ $("t").value=ag.t; draw(); }; box.appendChild(b); });
+}
+function drawPolar(){
+  const w=cv.width,h=cv.height; ctx.clearRect(0,0,w,h);
+  const a=cur.tmin, b=cur.tmax, tc=parseFloat($("t").value);
+  const R=(cur.rmax||1)*1.22, s=Math.min(w,h)/(2*R)*view.scale, ox=w/2+view.ox, oy=h/2+view.oy;
+  const PX=X=>ox+X*s, PY=Y=>oy-Y*s, pol=(rr,th)=>[rr*Math.cos(th),rr*Math.sin(th)];
+  ctx.strokeStyle="#e7edf3"; ctx.lineWidth=1;
+  (cur.rings||[0.5,1]).forEach(rr=>{ ctx.beginPath(); ctx.arc(ox,oy,rr*s,0,TAU); ctx.stroke(); });
+  ctx.fillStyle="#9aa7b4"; ctx.font="11px system-ui";
+  (cur.rings||[]).forEach(rr=>{ ctx.fillText(String(rr), PX(rr)+3, oy-3); });
+  ctx.textAlign="center"; ctx.textBaseline="middle";
+  (cur.mainAngles||[]).forEach(ag=>{ if(Math.abs(ag.t-TAU)<1e-9) return;
+    const col=FAM[ag.fam]||"#888", e=pol(cur.rmax||1,ag.t), neg=cur.r(ag.t)<-1e-9;
+    ctx.strokeStyle=col; ctx.lineWidth=(ag.fam==="axis")?2:1; ctx.setLineDash(neg?[5,4]:[]);
+    ctx.beginPath(); ctx.moveTo(ox,oy); ctx.lineTo(PX(e[0]),PY(e[1])); ctx.stroke(); ctx.setLineDash([]);
+    const L=pol((cur.rmax||1)*1.1,ag.t); ctx.fillStyle="#5b6b7a"; ctx.font="11px system-ui";
+    ctx.fillText(ag.lab, PX(L[0]), PY(L[1])); });
+  ctx.textAlign="start"; ctx.textBaseline="alphabetic";
+  const arc=(t0,t1,st,wd)=>{ ctx.strokeStyle=st; ctx.lineWidth=wd; ctx.beginPath(); let on=false; const N=600;
+    for(let i=0;i<=N;i++){ const th=t0+(t1-t0)*i/N, p=pol(cur.r(th),th), sx=PX(p[0]),sy=PY(p[1]);
+      if(!isFinite(sx)||!isFinite(sy)){on=false;continue;} on?ctx.lineTo(sx,sy):(ctx.moveTo(sx,sy),on=true);} ctx.stroke(); };
+  arc(a,b,"#b9d4ec",2); arc(a,tc,"#005AAA",3);
+  const sig=(b-a)*0.075||1, tail=3*sig, MSEG=46; ctx.lineCap="round"; ctx.lineWidth=4; let pX=null,pY=null;
+  for(let kk=MSEG;kk>=0;kk--){ const u=tail*kk/MSEG, sth=tc-dir*u; if(sth<a-1e-9||sth>b+1e-9){pX=null;continue;}
+    const p=pol(cur.r(sth),sth), sx=PX(p[0]),sy=PY(p[1]);
+    if(pX!==null&&isFinite(sx)){ const al=Math.exp(-(u/sig)*(u/sig)); ctx.strokeStyle="rgba("+RED+","+(0.9*al).toFixed(3)+")";
+      ctx.beginPath();ctx.moveTo(pX,pY);ctx.lineTo(sx,sy);ctx.stroke(); } pX=sx;pY=sy; }
+  ctx.lineCap="butt";
+  let near=0,nd=1e9; (cur.mainAngles||[]).forEach((ag,i)=>{const d=Math.abs(ag.t-tc); if(d<nd){nd=d;near=i;}});
+  const NA=(cur.mainAngles||[])[near]||{fam:"axis",lab:tc.toFixed(2)};
+  const rc=cur.r(tc), pc=pol(rc,tc), CX=PX(pc[0]),CY=PY(pc[1]);
+  { const e=pol(cur.rmax||1,tc); ctx.save(); ctx.globalAlpha=0.45; ctx.strokeStyle=FAM[NA.fam]||"#888"; ctx.lineWidth=3.5;
+    ctx.beginPath();ctx.moveTo(ox,oy);ctx.lineTo(PX(e[0]),PY(e[1]));ctx.stroke(); ctx.restore(); }
+  if(rc<-1e-9){ const g=pol(Math.abs(rc),tc); ctx.strokeStyle="#9aa7b4"; ctx.setLineDash([5,4]); ctx.lineWidth=1.5;
+      ctx.beginPath();ctx.moveTo(ox,oy);ctx.lineTo(PX(g[0]),PY(g[1]));ctx.stroke(); ctx.setLineDash([]);
+      ctx.fillStyle="#9aa7b4"; ctx.beginPath();ctx.arc(PX(g[0]),PY(g[1]),3,0,TAU);ctx.fill();
+      ctx.strokeStyle="#C42327"; ctx.lineWidth=2.5; ctx.beginPath();ctx.moveTo(ox,oy);ctx.lineTo(CX,CY);ctx.stroke();
+  } else { ctx.strokeStyle=FAM[NA.fam]||"#C42327"; ctx.lineWidth=2.5; ctx.beginPath();ctx.moveTo(ox,oy);ctx.lineTo(CX,CY);ctx.stroke(); }
+  ctx.fillStyle="#1d2733"; ctx.beginPath();ctx.arc(ox,oy,3.5,0,TAU);ctx.fill();
+  ctx.fillStyle="#C42327"; ctx.beginPath();ctx.arc(CX,CY,5,0,TAU);ctx.fill();
+  ctx.fillStyle="#1d2733"; ctx.font="bold 12px system-ui";
+  (cur.notes||[]).forEach(nt=>{ const p=pol(cur.r(nt.t),nt.t); ctx.fillText(nt.txt, PX(p[0])+8, PY(p[1])-6); });
+  $("tval").textContent = (nd<0.03?NA.lab:tc.toFixed(3));
+  $("xv").textContent=(Math.abs(pc[0])<5e-4?0:pc[0]).toFixed(3); $("yv").textContent=(Math.abs(pc[1])<5e-4?0:pc[1]).toFixed(3);
+  const pb=$("polarbox"); if(pb){ pb.innerHTML=`θ = <b>${nd<0.03?NA.lab:tc.toFixed(2)}</b> &nbsp;·&nbsp; r = <b>${f2(rc)}</b> &nbsp;·&nbsp; (x, y) = (${f2(pc[0])}, ${f2(pc[1])})`+(rc<-1e-9?` &nbsp;·&nbsp; <span style="color:#C42327;font-weight:700">r&lt;0 → plotted at θ+π</span>`:``); }
+  updateTablePolar(tc);
+}
+
 function bounds(){
   const a=parseFloat($("tmin").value), b=parseFloat($("tmax").value);
   let xmn=1e9,xmx=-1e9,ymn=1e9,ymx=-1e9;
@@ -270,6 +441,7 @@ function TY(Y){ return cv.height/2 + view.oy - (Y-B.cym)*B.s*view.scale; }
 function niceStep(r){ const raw=r/8, p=Math.pow(10,Math.floor(Math.log10(raw))), m=raw/p; return (m<1.5?1:m<3?2:m<7?5:10)*p; }
 
 function draw(){
+  if(base.polar){ drawPolar(); return; }
   B=bounds(); const w=cv.width,h=cv.height; ctx.clearRect(0,0,w,h);
   const sEff=B.s*view.scale;
   const xL=B.cxm-(w/2+view.ox)/sEff, xR=B.cxm+(w/2-view.ox)/sEff;
@@ -368,8 +540,8 @@ function tick(){ if(!playing)return;
 function resetView(){ view={scale:1,ox:0,oy:0}; }
 
 $("t").oninput=draw;
-$("tmin").onchange=()=>{ $("t").min=$("tmin").value; buildTable(); draw(); };
-$("tmax").onchange=()=>{ $("t").max=$("tmax").value; buildTable(); draw(); };
+$("tmin").onchange=()=>{ $("t").min=$("tmin").value; (base.polar?buildTablePolar:buildTable)(); draw(); };
+$("tmax").onchange=()=>{ $("t").max=$("tmax").value; (base.polar?buildTablePolar:buildTable)(); draw(); };
 $("play").onclick=()=>{ playing=!playing; $("play").textContent=playing?"❚❚ Pause":"▶ Play"; if(playing)raf=requestAnimationFrame(tick); else cancelAnimationFrame(raf); };
 $("dir").onclick=()=>{ dir=-dir; $("dir").textContent = dir>0?"⇄ Reverse":"⇄ Forward"; draw(); };
 $("reset").onclick=()=>{ playing=false; $("play").textContent="▶ Play"; cancelAnimationFrame(raf); dir=1; $("dir").textContent="⇄ Reverse"; buildParams(); setActive(base.variants?base.variants[0]:base); resetView(); draw(); };
@@ -389,5 +561,6 @@ if(base.tangent){ const _sb=$("slopebox"); if(_sb) _sb.style.display=""; const _
 buildParams();
 setActive(base.variants?base.variants[0]:base);
 if(base.tangent) buildSummary();
+if(base.polar){ const _pb=$("polarbox"); if(_pb)_pb.style.display=""; buildSnaps(); }
 draw();
 })();

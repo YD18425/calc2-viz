@@ -159,6 +159,56 @@ const P = {
     mainAngles:[{t:0,lab:"0",fam:"axis"},{t:Math.PI/6,lab:"π/6",fam:"sixth"},{t:Math.PI/4,lab:"π/4",fam:"quarter"},{t:Math.PI/3,lab:"π/3",fam:"third"},{t:Math.PI/2,lab:"π/2",fam:"axis"},{t:2*Math.PI/3,lab:"2π/3",fam:"third"},{t:3*Math.PI/4,lab:"3π/4",fam:"quarter"},{t:5*Math.PI/6,lab:"5π/6",fam:"sixth"},{t:Math.PI,lab:"π",fam:"axis"},{t:7*Math.PI/6,lab:"7π/6",fam:"sixth"},{t:5*Math.PI/4,lab:"5π/4",fam:"quarter"},{t:4*Math.PI/3,lab:"4π/3",fam:"third"},{t:3*Math.PI/2,lab:"3π/2",fam:"axis"},{t:5*Math.PI/3,lab:"5π/3",fam:"third"},{t:7*Math.PI/4,lab:"7π/4",fam:"quarter"},{t:11*Math.PI/6,lab:"11π/6",fam:"sixth"},{t:2*Math.PI,lab:"2π",fam:"axis"}],
     notes:[],
     note:"Archimedean spiral r=θ: distance from the pole grows with the angle."
+  },
+  // ===================== §10.4 polar-AREA sweep presets (gated behind base.area) =====================
+  "ex1": {
+    label:"§10.4 Example 1 — area inside r = 1 − cos θ (first quadrant)",
+    eqn:"r = 1 − cos θ,  swept from θ = 0 to θ = π/2.   A = ½ ∫₀^{π/2} (1 − cos θ)² dθ.   (single curve from the pole)",
+    sec:"§10.4", area:true,
+    rO:t=>1-Math.cos(t), rI:null, tmin:0, tmax:Math.PI/2,
+    rmax:2, rings:[0.5,1,1.5,2], areaExact:"3π/8 − 1 ≈ 0.178"
+  },
+  "ex2": {
+    label:"§10.4 Example 2 — area enclosed by the cardioid r = 2(1 + sin θ)",
+    eqn:"r = 2(1 + sin θ),  swept once from θ = 0 to θ = 2π.   A = ½ ∫₀^{2π} [2(1 + sin θ)]² dθ.   (single curve from the pole)",
+    sec:"§10.4", area:true,
+    rO:t=>2*(1+Math.sin(t)), rI:null, tmin:0, tmax:2*Math.PI,
+    rmax:4, rings:[1,2,3,4], areaExact:"6π ≈ 18.85"
+  },
+  "ex3": {
+    label:"§10.4 Example 3 — inside the cardioid r = 2 + 2 sin θ and outside the circle r = 2 (Q1)",
+    eqn:"Outer r = 2 + 2 sin θ,  inner r = 2,  θ from 0 to π/2.   A = ½ ∫₀^{π/2} [(2 + 2 sin θ)² − 2²] dθ.",
+    sec:"§10.4", area:true,
+    rO:t=>2+2*Math.sin(t), rI:t=>2, tmin:0, tmax:Math.PI/2,
+    rmax:4, rings:[1,2,3,4], areaExact:"4 + π/2 ≈ 5.57"
+  },
+  "ex4": {
+    label:"§10.4 Example 4 — inside the cardioid r = 2 + 2 cos θ and outside the circle r = 3",
+    eqn:"Outer r = 2 + 2 cos θ,  inner r = 3,  θ from −π/3 to π/3.   A = ½ ∫_{−π/3}^{π/3} [(2 + 2 cos θ)² − 3²] dθ.",
+    sec:"§10.4", area:true,
+    rO:t=>2+2*Math.cos(t), rI:t=>3, tmin:-Math.PI/3, tmax:Math.PI/3,
+    rmax:4, rings:[1,2,3,4], areaExact:"9√3/2 − π ≈ 4.65"
+  },
+  "ex5": {
+    label:"§10.4 Example 5 — inside the circle r = 3 sin θ and outside the cardioid r = 1 + sin θ",
+    eqn:"Outer r = 3 sin θ,  inner r = 1 + sin θ,  θ from π/6 to 5π/6.   A = ½ ∫_{π/6}^{5π/6} [(3 sin θ)² − (1 + sin θ)²] dθ.",
+    sec:"§10.4", area:true,
+    rO:t=>3*Math.sin(t), rI:t=>1+Math.sin(t), tmin:Math.PI/6, tmax:5*Math.PI/6,
+    rmax:3, rings:[1,2,3], areaExact:"π ≈ 3.14"
+  },
+  "lab24": {
+    label:"§10.4 Lab 24 — inside the cardioid r = 1 − sin θ and outside the circle r = 1",
+    eqn:"Outer r = 1 − sin θ,  inner r = 1,  θ from π to 2π.   A = ½ ∫_{π}^{2π} [(1 − sin θ)² − 1²] dθ.",
+    sec:"§10.4", area:true,
+    rO:t=>1-Math.sin(t), rI:t=>1, tmin:Math.PI, tmax:2*Math.PI,
+    rmax:2, rings:[0.5,1,1.5,2], areaExact:"π/4 + 2 ≈ 2.79"
+  },
+  "lab26": {
+    label:"§10.4 Lab 26 — inside the cardioid r = 1 + cos θ and outside the limaçon r = 2 − cos θ",
+    eqn:"Outer r = 1 + cos θ,  inner r = 2 − cos θ,  θ from −π/3 to π/3.   A = ½ ∫_{−π/3}^{π/3} [(1 + cos θ)² − (2 − cos θ)²] dθ.",
+    sec:"§10.4", area:true,
+    rO:t=>1+Math.cos(t), rI:t=>2-Math.cos(t), tmin:-Math.PI/3, tmax:Math.PI/3,
+    rmax:3, rings:[1,2,3], areaExact:"3√3 − π ≈ 2.05"
   }
 };
 
@@ -186,6 +236,7 @@ root.innerHTML =
        '<div class="ro" id="slopebox" style="display:none">&nbsp;·&nbsp; dy/dx = <b><span id="sv"></span></b> &nbsp;<span class="hint" id="dcomp"></span></div>'+
        '<div class="hint">Wheel = zoom · drag = pan</div></div>'+
      '<div class="row"><div class="ro" id="polarbox" style="display:none"></div></div>'+
+     '<div class="row"><div class="ro" id="areabox" style="display:none"></div></div>'+
      '<div id="params" class="row" style="margin-top:8px"></div>'+
    '</div>'+
    '<div class="panel"><div class="vizrow">'+
@@ -315,10 +366,10 @@ function updateTable(current){
 }
 
 function setActive(src){
-  cur={x:src.x, y:src.y, tmin:src.tmin, tmax:src.tmax, tangent:src.tangent, dx:src.dx, dy:src.dy, hpts:src.hpts, vpts:src.vpts, crit:src.crit, snap:src.snap, d2:src.d2, concavity:src.concavity, infl:src.infl, note:src.note, polar:src.polar, r:src.r, mainAngles:src.mainAngles, rings:src.rings, rmax:src.rmax, notes:src.notes};
+  cur={x:src.x, y:src.y, tmin:src.tmin, tmax:src.tmax, tangent:src.tangent, dx:src.dx, dy:src.dy, hpts:src.hpts, vpts:src.vpts, crit:src.crit, snap:src.snap, d2:src.d2, concavity:src.concavity, infl:src.infl, note:src.note, polar:src.polar, r:src.r, mainAngles:src.mainAngles, rings:src.rings, rmax:src.rmax, notes:src.notes, area:src.area, rO:src.rO, rI:src.rI, areaExact:src.areaExact};
   $("t").min=src.tmin; $("t").max=src.tmax; $("t").step=(src.tmax-src.tmin)/1000; $("t").value=src.tmin;
   $("tmin").value=(+src.tmin).toFixed(2); $("tmax").value=(+src.tmax).toFixed(2);
-  (base.polar?buildTablePolar:buildTable)();
+  (base.area?buildAreaTable:base.polar?buildTablePolar:buildTable)();
 }
 
 if(base.variants){
@@ -424,6 +475,94 @@ function drawPolar(){
   updateTablePolar(tc);
 }
 
+// ===================== §10.4 polar-AREA sweep mode (gated behind base.area) =====================
+// Numerical area helper (Simpson, n=400): A(α,φ) = ½ ∫_α^φ (rO(θ)² − (rI?rI(θ)²:0)) dθ.
+function areaSimpson(a,b){
+  if(b<=a) return 0;
+  let n=400; if(n%2) n++;
+  const h=(b-a)/n; let s=0;
+  for(let i=0;i<=n;i++){ const th=a+i*h, ro=cur.rO(th), ri=cur.rI?cur.rI(th):0;
+    const f=ro*ro-ri*ri, w=(i===0||i===n)?1:(i%2?4:2); s+=w*f; }
+  return 0.5*(h/3)*s;
+}
+function buildAreaTable(){
+  const a=cur.tmin, b=cur.tmax, N=9;
+  TS=[]; for(let i=0;i<N;i++){ const t=a+(b-a)*i/(N-1); TS.push({t,lab:f2(t)}); }
+  const tbl=$("vtbl"); tbl.innerHTML=""; const hasI=!!cur.rI;
+  cells={th:[],ro:[],ri:[],ar:[]};
+  const mk=(keyName,label)=>{ const tr=document.createElement("tr");
+    const th=document.createElement("th"); th.textContent=label; th.className="rl"; tr.appendChild(th);
+    for(let i=0;i<TS.length;i++){ const td=document.createElement("td");
+      td.className="acol"; td.title="set φ = "+TS[i].lab;
+      td.onclick=()=>{ $("t").value=TS[i].t; draw(); };
+      tr.appendChild(td); cells[keyName].push(td); }
+    tbl.appendChild(tr); };
+  mk("th","θ"); mk("ro","r_out"); if(hasI) mk("ri","r_in"); mk("ar","A(α,θ)");
+}
+function updateAreaTable(current){
+  if(!cells||!cells.th) return;
+  let near=0,nd=1e9; for(let i=0;i<TS.length;i++){ const d=Math.abs(TS[i].t-current); if(d<nd){nd=d;near=i;} }
+  for(let i=0;i<TS.length;i++){ const C=TS[i], ti=C.t, filled=ti<=current+1e-9, active=(i===near);
+    const ro=cur.rO(ti), ri=cur.rI?cur.rI(ti):0, Ai=areaSimpson(cur.tmin,ti);
+    cells.th[i].textContent = filled?C.lab:"";
+    cells.ro[i].textContent = filled?f2(ro):"";
+    if(cur.rI && cells.ri[i]) cells.ri[i].textContent = filled?f2(ri):"";
+    cells.ar[i].textContent = filled?f2(Ai):"";
+    [cells.th[i],cells.ro[i],(cur.rI?cells.ri[i]:null),cells.ar[i]].forEach(td=>{ if(!td) return;
+      td.classList.toggle("active",active);
+      td.style.background = active?"rgba(0,90,170,0.16)":""; });
+  }
+  const cell=cells.th[near]; if(cell&&tblwrap){ tblwrap.scrollLeft=Math.max(0,(cell.offsetLeft||0)-(tblwrap.clientWidth||300)*0.5); }
+}
+function drawArea(){
+  const w=cv.width,h=cv.height; ctx.clearRect(0,0,w,h);
+  const a=cur.tmin, b=cur.tmax, phi=parseFloat($("t").value);
+  const R=(cur.rmax||1)*1.18, s=Math.min(w,h)/(2*R)*view.scale, ox=w/2+view.ox, oy=h/2+view.oy;
+  const PX=X=>ox+X*s, PY=Y=>oy-Y*s, pol=(rr,th)=>[rr*Math.cos(th),rr*Math.sin(th)];
+  const hasI=!!cur.rI;
+  // light concentric rings
+  ctx.strokeStyle="#e7edf3"; ctx.lineWidth=1;
+  (cur.rings||[0.5,1]).forEach(rr=>{ ctx.beginPath(); ctx.arc(ox,oy,rr*s,0,TAU); ctx.stroke(); });
+  ctx.fillStyle="#9aa7b4"; ctx.font="11px system-ui";
+  (cur.rings||[]).forEach(rr=>{ ctx.fillText(String(rr), PX(rr)+3, oy-3); });
+  // emphasised gold axes
+  ctx.strokeStyle=FAMSTRONG.axis; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.moveTo(PX(-R),oy); ctx.lineTo(PX(R),oy); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(ox,PY(-R)); ctx.lineTo(ox,PY(R)); ctx.stroke();
+  // FULL outer curve faint blue + full inner curve faint red (over the swept span)
+  const drawCurve=(rf,t0,t1,st,wd)=>{ ctx.strokeStyle=st; ctx.lineWidth=wd; ctx.beginPath(); let on=false; const N=600;
+    for(let i=0;i<=N;i++){ const th=t0+(t1-t0)*i/N, p=pol(rf(th),th), sx=PX(p[0]),sy=PY(p[1]);
+      if(!isFinite(sx)||!isFinite(sy)){on=false;continue;} on?ctx.lineTo(sx,sy):(ctx.moveTo(sx,sy),on=true); } ctx.stroke(); };
+  drawCurve(cur.rO,a,b,"#b9d4ec",2);
+  if(hasI) drawCurve(cur.rI,a,b,"#f0b9bb",2);
+  // SHADE the swept region α → φ: out along outer, back along inner (or to pole)
+  ctx.beginPath(); { let on=false; const N=400;
+    for(let i=0;i<=N;i++){ const th=a+(phi-a)*i/N, p=pol(cur.rO(th),th), sx=PX(p[0]),sy=PY(p[1]);
+      if(!isFinite(sx)||!isFinite(sy))continue; on?ctx.lineTo(sx,sy):(ctx.moveTo(sx,sy),on=true); }
+    if(hasI){ for(let i=N;i>=0;i--){ const th=a+(phi-a)*i/N, p=pol(cur.rI(th),th), sx=PX(p[0]),sy=PY(p[1]);
+        if(isFinite(sx)&&isFinite(sy)) ctx.lineTo(sx,sy); } }
+    else { ctx.lineTo(ox,oy); } }
+  ctx.closePath(); ctx.fillStyle="rgba(0,90,170,0.16)"; ctx.fill();
+  // bold outer (blue) + inner (red) over [α,φ]
+  drawCurve(cur.rO,a,phi,"#005AAA",3);
+  if(hasI) drawCurve(cur.rI,a,phi,"#C42327",3);
+  // radial spokes at α (fixed) and φ (moving)
+  const spoke=(th,st,wd)=>{ const eO=pol(cur.rO(th),th); ctx.strokeStyle=st; ctx.lineWidth=wd;
+    ctx.beginPath(); ctx.moveTo(ox,oy); ctx.lineTo(PX(eO[0]),PY(eO[1])); ctx.stroke(); };
+  spoke(a,"rgba(29,39,51,0.55)",2);
+  spoke(phi,"#1d2733",2.5);
+  // pole dot + moving dot where φ-spoke meets the outer curve
+  ctx.fillStyle="#1d2733"; ctx.beginPath(); ctx.arc(ox,oy,3.5,0,TAU); ctx.fill();
+  const pO=pol(cur.rO(phi),phi); ctx.fillStyle="#C42327"; ctx.beginPath(); ctx.arc(PX(pO[0]),PY(pO[1]),5,0,TAU); ctx.fill();
+  if(hasI){ const pI=pol(cur.rI(phi),phi); ctx.fillStyle="#005AAA"; ctx.beginPath(); ctx.arc(PX(pI[0]),PY(pI[1]),4,0,TAU); ctx.fill(); }
+  // readouts
+  const A=areaSimpson(a,phi);
+  $("tval").textContent = phi.toFixed(3);
+  $("xv").textContent=(Math.abs(pO[0])<5e-4?0:pO[0]).toFixed(3); $("yv").textContent=(Math.abs(pO[1])<5e-4?0:pO[1]).toFixed(3);
+  const ab=$("areabox"); if(ab){ ab.innerHTML=`φ = <b>${phi.toFixed(2)}</b> &nbsp;·&nbsp; swept area A(α,φ) = <b>${f2(A)}</b> &nbsp;·&nbsp; of total = <b>${escHtml(cur.areaExact||"")}</b>`; }
+  updateAreaTable(phi);
+}
+
 function bounds(){
   const a=parseFloat($("tmin").value), b=parseFloat($("tmax").value);
   let xmn=1e9,xmx=-1e9,ymn=1e9,ymx=-1e9;
@@ -442,6 +581,7 @@ function niceStep(r){ const raw=r/8, p=Math.pow(10,Math.floor(Math.log10(raw))),
 
 function draw(){
   if(base.polar){ drawPolar(); return; }
+  if(base.area){ drawArea(); return; }
   B=bounds(); const w=cv.width,h=cv.height; ctx.clearRect(0,0,w,h);
   const sEff=B.s*view.scale;
   const xL=B.cxm-(w/2+view.ox)/sEff, xR=B.cxm+(w/2-view.ox)/sEff;
@@ -540,8 +680,8 @@ function tick(){ if(!playing)return;
 function resetView(){ view={scale:1,ox:0,oy:0}; }
 
 $("t").oninput=draw;
-$("tmin").onchange=()=>{ $("t").min=$("tmin").value; (base.polar?buildTablePolar:buildTable)(); draw(); };
-$("tmax").onchange=()=>{ $("t").max=$("tmax").value; (base.polar?buildTablePolar:buildTable)(); draw(); };
+$("tmin").onchange=()=>{ $("t").min=$("tmin").value; (base.area?buildAreaTable:base.polar?buildTablePolar:buildTable)(); draw(); };
+$("tmax").onchange=()=>{ $("t").max=$("tmax").value; (base.area?buildAreaTable:base.polar?buildTablePolar:buildTable)(); draw(); };
 $("play").onclick=()=>{ playing=!playing; $("play").textContent=playing?"❚❚ Pause":"▶ Play"; if(playing)raf=requestAnimationFrame(tick); else cancelAnimationFrame(raf); };
 $("dir").onclick=()=>{ dir=-dir; $("dir").textContent = dir>0?"⇄ Reverse":"⇄ Forward"; draw(); };
 $("reset").onclick=()=>{ playing=false; $("play").textContent="▶ Play"; cancelAnimationFrame(raf); dir=1; $("dir").textContent="⇄ Reverse"; buildParams(); setActive(base.variants?base.variants[0]:base); resetView(); draw(); };
@@ -562,5 +702,6 @@ buildParams();
 setActive(base.variants?base.variants[0]:base);
 if(base.tangent) buildSummary();
 if(base.polar){ const _pb=$("polarbox"); if(_pb)_pb.style.display=""; buildSnaps(); }
+if(base.area){ const _ab=$("areabox"); if(_ab)_ab.style.display=""; }
 draw();
 })();
